@@ -76,8 +76,7 @@ Tỷ lệ test case merge không sửa, theo module. <60% → bơm `viewpoints.m
 | 2 Monitoring          | `/qa-report` `/qa-retest` | ✅  |
 | 7 Completion          | `/qa-complete`            | ⬜  |
 
-Skills: `testcase-generate` ✅ `test-triage` ✅ | `scenario-map` `viewpoint-apply`
-`detail-fill` `gap-report` `coverage-check` ⬜
+Skills: `testcase-generate` ✅ `test-triage` ✅ `gap-report` ✅ `coverage-check` ✅ | `scenario-map` `viewpoint-apply` `detail-fill` ⬜
 
 Tools: `harness.py` `validate.py` `export_excel.py` ⬜
 

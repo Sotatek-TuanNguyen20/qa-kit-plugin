@@ -61,7 +61,11 @@ Thiếu 1–3 → finding lớn, gap-report ngay.
 2. Với mỗi condition, tìm căn cứ expected trong `docs/`.
 3. **Trích nguyên văn** từ `docs/` vào `evidence.quote`. KHÔNG paraphrase, KHÔNG tóm tắt.
 4. Ghi `source_type`. Ưu tiên `db_definition` > `screen_item` > `message_list` > `dd` > `spec`.
-5. Không tìm được căn cứ → **dừng, ghi gap-report**, không tạo case.
+5. Không tìm được căn cứ → **dừng, append 1 entry vào `work/$1/gaps.yaml`**
+   theo schema ở `skills/gap-report/SKILL.md` (`gap_type` phù hợp:
+   `missing_evidence`/`contradiction`/`missing_operator`/`missing_message_list`/
+   `missing_screen_item`; `severity` tính theo bảng floor trong file đó),
+   không tạo case.
 6. Validate schema trước khi ghi file.
 
 ### Boundary: BẮT BUỘC `evidence.operator`
@@ -164,4 +168,4 @@ không tự chế "hiển thị thông báo lỗi".
 - [ ] `viewpoint` là ID có thật trong viewpoints.md?
 - [ ] `trace` đúng level (IT→DD, ST→BD)?
 - [ ] Boundary có đủ cặp (min/min-1, max/max+1)?
-- [ ] Case không có căn cứ đã chuyển sang gap-report chưa?
+- [ ] Case không có căn cứ đã append vào `work/$1/gaps.yaml` đúng schema chưa (không phải chỉ "ghi gap-report" chung chung)?
