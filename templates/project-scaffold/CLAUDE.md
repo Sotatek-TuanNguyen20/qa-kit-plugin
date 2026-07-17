@@ -102,11 +102,11 @@ blocked = chưa test được (bug khác chặn). Nhiều blocked + pass rate ca
 
 ## Pipeline
 
-/qa-design <module>        -> testcases/<m>.yaml + gap + coverage -> HUMAN REVIEW
-/qa-run <module>           -> results/<m>-r<N>.yaml  (gắn build_version)
-/qa-eval <module>          -> triage -> routing (KHÔNG sửa gì)
-/qa-report <module>        -> reports/  (regression lên đầu)
-/qa-retest <module> <build>-> scope round N+1 -> HUMAN REVIEW -> /qa-run
+/qa-kit:qa-design <module>        -> testcases/<m>.yaml + gap + coverage -> HUMAN REVIEW
+/qa-kit:qa-run <module>           -> results/<m>-r<N>.yaml  (gắn build_version)
+/qa-kit:qa-eval <module>          -> triage -> routing (KHÔNG sửa gì)
+/qa-kit:qa-report <module>        -> reports/  (regression lên đầu)
+/qa-kit:qa-retest <module> <build>-> scope round N+1 -> HUMAN REVIEW -> /qa-kit:qa-run
 
 ## Cấm
 

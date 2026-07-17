@@ -17,15 +17,15 @@ Không đọc source code. Không phải UT. Không phải view của dev.
 ```bash
 mkdir qa-project-a && cd qa-project-a
 claude
-> /qa-init project-a          # scaffold 1 lần
+> /qa-kit:qa-init project-a          # scaffold 1 lần
 # comtor bỏ doc vào docs/, xin dev DDL vào db/
-> /qa-design login            # → testcases/login.yaml + gap + coverage
+> /qa-kit:qa-design login            # → testcases/login.yaml + gap + coverage
 # HUMAN REVIEW → merge
-> /qa-run login --build=v1.2.3
-> /qa-eval login              # triage → routing
-> /qa-report login
+> /qa-kit:qa-run login --build=v1.2.3
+> /qa-kit:qa-eval login              # triage → routing
+> /qa-kit:qa-report login
 # dev fix
-> /qa-retest login v1.2.4     # scope = retest_failed + REGRESSION
+> /qa-kit:qa-retest login v1.2.4     # scope = retest_failed + REGRESSION
 ```
 
 ## Ranh giới plugin ↔ dự án

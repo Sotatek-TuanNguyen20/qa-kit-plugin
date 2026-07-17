@@ -17,15 +17,15 @@ Does not read source code. Not unit testing. Not a developer's view.
 ```bash
 mkdir qa-project-a && cd qa-project-a
 claude
-> /qa-init project-a          # scaffold once
+> /qa-kit:qa-init project-a          # scaffold once
 # comtor drops docs into docs/, get DDL from dev into db/
-> /qa-design login            # → testcases/login.yaml + gap + coverage
+> /qa-kit:qa-design login            # → testcases/login.yaml + gap + coverage
 # HUMAN REVIEW → merge
-> /qa-run login --build=v1.2.3
-> /qa-eval login              # triage → routing
-> /qa-report login
+> /qa-kit:qa-run login --build=v1.2.3
+> /qa-kit:qa-eval login              # triage → routing
+> /qa-kit:qa-report login
 # dev fixes
-> /qa-retest login v1.2.4     # scope = retest_failed + REGRESSION
+> /qa-kit:qa-retest login v1.2.4     # scope = retest_failed + REGRESSION
 ```
 
 ## Plugin ↔ project boundary
