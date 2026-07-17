@@ -41,7 +41,7 @@
 | `trace` | traceability | トレーサビリティ | |
 | `test_level: IT/ST` | integration / system testing | 結合テスト / システムテスト | |
 | `results/*.yaml` | test results | テスト結果 | |
-| `/qa-ready` checklist | entry criteria | 開始基準 | |
+| `/qa-kit:ready` checklist | entry criteria | 開始基準 | |
 | exit criteria (conventions.md) | exit criteria | 終了基準 | |
 | `status` 5 giá trị | pass/fail/blocked/skipped | 合格/不合格/ブロック/スキップ | ✅ đúng chuẩn |
 | `build_version` | test object version | テスト対象バージョン | ISTQB đòi ghi bắt buộc |

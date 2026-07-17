@@ -96,7 +96,7 @@ properties:
           Trích NGUYÊN VĂN từ test_basis. KHÔNG paraphrase, KHÔNG tóm tắt.
           Không trích được -> gap-report, KHÔNG tạo case.
           GHI CHÚ: field này KHÔNG có trong ISTQB. Là guardrail riêng cho ngữ cảnh AI —
-          xem context/standards-mapping.md. IMMUTABLE, cấm sửa ở /qa-eval.
+          xem context/standards-mapping.md. IMMUTABLE, cấm sửa ở /qa-kit:eval.
       source_type:
         type: string
         enum: [spec, dd, db_definition, message_list, screen_item]
