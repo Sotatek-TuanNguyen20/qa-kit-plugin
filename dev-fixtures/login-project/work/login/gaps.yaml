@@ -1,0 +1,44 @@
+# Fixture nội bộ để verify gap-report. Mỗi entry cố ý test 1 floor rule:
+# - GAP-001: gap_type missing_screen_item -> floor P1, cũng test coverage-check
+#   annotate DD-4 là "đã biết, đang chờ trả lời".
+# - GAP-002: gap_type missing_message_list -> floor P1.
+# - GAP-003: gap_type missing_operator trên case ưu tiên thấp -> floor P2
+#   (không tụt xuống P3 dù case gốc không quan trọng).
+# DD-3 KHÔNG có entry nào ở đây -> coverage-check phải báo "CHƯA CÓ GAP".
+
+- id: GAP-001
+  raised_at: "2026-07-17T09:00:00+07:00"
+  raised_by: testcase-generate
+  step: 4
+  trace: [DD-4]
+  condition_ref: "Đăng nhập qua SSO"
+  gap_type: missing_screen_item
+  severity: P1
+  description_vi: "DD-4 chỉ nói 'đăng nhập qua SSO nội bộ' nhưng không có field/màn hình cụ thể để sinh case."
+  question_vi: "Màn hình SSO có field/nút nào? Cần screen item definition cho DD-4."
+  status: open
+  answer_vi: ""
+- id: GAP-002
+  raised_at: "2026-07-17T09:05:00+07:00"
+  raised_by: testcase-generate
+  step: 4
+  trace: [DD-2.1]
+  condition_ref: "Password dưới biên (7 ký tự)"
+  gap_type: missing_message_list
+  severity: P1
+  description_vi: "Không tìm được message lỗi cho case password 7 ký tự — message list chưa có trong docs/."
+  question_vi: "Message lỗi khi password dưới 8 ký tự là gì? Message ID nào?"
+  status: open
+  answer_vi: ""
+- id: GAP-003
+  raised_at: "2026-07-17T09:10:00+07:00"
+  raised_by: testcase-generate
+  step: 4
+  trace: [DD-2.1]
+  condition_ref: "Password đúng biên trên phụ (edge case hiếm, priority gốc P3)"
+  gap_type: missing_operator
+  severity: P2
+  description_vi: "Case phụ ít quan trọng nhưng DATA-01 thiếu evidence.operator rõ ràng — floor P2 áp dụng dù case gốc P3."
+  question_vi: "'Trên 32 ký tự' là <=32 hay <32? Cần DDL hoặc xác nhận BrSE."
+  status: open
+  answer_vi: ""

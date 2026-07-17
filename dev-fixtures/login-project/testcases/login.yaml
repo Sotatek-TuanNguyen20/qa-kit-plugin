@@ -1,0 +1,28 @@
+- id: IT-LOGIN-001
+  trace: [DD-2.1]
+  test_level: IT
+  category:
+    large: "Nghiệp vụ đăng nhập"
+    medium: "Xác thực password"
+    small: "Password đúng biên dưới"
+  viewpoint: DATA-01
+  precondition_vi:
+    - "Tài khoản đã được cấp, trạng thái hoạt động"
+  condition_vi: "Password 8 ký tự (min)"
+  steps:
+    - action_vi: "Nhập password 8 ký tự"
+      data: { password: "Abcd1234" }
+    - action_vi: "Bấm nút đăng nhập"
+  expected_vi: "Đăng nhập thành công, chuyển sang màn hình chính"
+  evidence:
+    section: "DD-2.1"
+    quote: "Password từ 8 đến 32 ký tự. DDL: VARCHAR(32) NOT NULL CHECK (LENGTH(password) >= 8)"
+    source_type: db_definition
+    operator: { min: 8, min_op: ">=", max: 32, max_op: "<=" }
+  priority: P1
+  tags: [smoke]
+  automatable: true
+  verify:
+    - method: ui_visible
+      target: "màn hình chính"
+      expect: true
