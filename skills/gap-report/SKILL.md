@@ -3,7 +3,7 @@ name: gap-report
 description: >
   Đọc work/$1/gaps.yaml (tích lũy từ các skill dọc pipeline design), group theo
   severity, render reports/$1-gap.md. Dùng ở 2 điểm: khi machine gate của
-  /qa-design kích hoạt (giữa chừng), và ở bước 5 cuối chain (report đầy đủ).
+  /qa-kit:design kích hoạt (giữa chừng), và ở bước 5 cuối chain (report đầy đủ).
   KHÔNG tự phát hiện gap — chỉ render những gì đã được ghi sẵn.
 ---
 
@@ -26,7 +26,7 @@ test basis, không phải "AI tự tìm ra thiếu sót". Khi nói với khách,
 - **Không tự tính lại `severity`.** Entry trong `gaps.yaml` đã có `severity`
   sẵn (do skill append tính theo bảng floor dưới đây tại thời điểm ghi).
   `gap-report` group theo giá trị đó, không đối chiếu lại.
-- **Dùng chung 1 skill cho cả 2 điểm gọi** trong `qa-design.md` (giữa chừng khi
+- **Dùng chung 1 skill cho cả 2 điểm gọi** trong `commands/design.md` (giữa chừng khi
   machine gate kích hoạt, và bước 5 cuối chain) — cả 2 chỗ đều chỉ là "render
   gaps.yaml tại thời điểm gọi", không cần 2 mode khác nhau.
 

@@ -4,7 +4,7 @@ argument-hint: <module> [--step]
 allowed-tools: Read, Write, Glob, Grep
 ---
 
-# /qa-design $1
+# /qa-kit:design $1
 
 Chạy full chain cho module **$1**. Artifact trung gian ghi ra file để review được,
 nhưng KHÔNG hỏi tester giữa chừng — trừ khi machine gate bật.
@@ -47,6 +47,6 @@ In ra:
 - **Danh sách section CHƯA có case nào** <- cái tester cần nhìn nhất
 
 Rồi DỪNG. Human review `testcases/$1.yaml` trên Git diff.
-KHÔNG tự chạy /qa-run.
+KHÔNG tự chạy /qa-kit:run.
 
 Test case merge vào main rồi mới được chạy. Test case còn trong working dir = chưa ai duyệt.

@@ -4,7 +4,7 @@ argument-hint: <project-name>
 allowed-tools: Read, Write, Bash
 ---
 
-# /qa-init $1
+# /qa-kit:init $1
 
 ## Vì sao command này tồn tại
 
@@ -69,7 +69,7 @@ với người đọc sau này.
 ```
 ✅ Scaffold xong: <project-name>
 
-Việc tester phải làm TRƯỚC khi /qa-design:
+Việc tester phải làm TRƯỚC khi /qa-kit:design:
 1. config/env.yaml     -> điền base_url, db host TEST env
 2. docs/               -> comtor bỏ spec/DD (bản VI) vào
 3. db/                 -> xin dev DDL + ERD  ← nguồn boundary tin cậy nhất
@@ -78,7 +78,7 @@ Việc tester phải làm TRƯỚC khi /qa-design:
 Kiểm tra: git init && git add . && git commit -m "chore: init qa"
 ```
 
-Rồi DỪNG. Không tự chạy `/qa-design`.
+Rồi DỪNG. Không tự chạy `/qa-kit:design`.
 
 ## Cấm
 

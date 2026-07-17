@@ -1,7 +1,7 @@
 ---
 name: test-triage
 description: >
-  Phân loại nguyên nhân test fail để ROUTING tới đúng người. Dùng trong /qa-eval.
+  Phân loại nguyên nhân test fail để ROUTING tới đúng người. Dùng trong /qa-kit:eval.
   KHÔNG sửa gì cả — QC không sửa code, không sửa script sản phẩm.
 ---
 

@@ -4,7 +4,7 @@ argument-hint: <module> [--only-auto|--only-manual]
 allowed-tools: Read, Write, Bash
 ---
 
-# /qa-run $1 --build=<version> [--round=<N>] [--scope=<file>]
+# /qa-kit:run $1 --build=<version> [--round=<N>] [--scope=<file>]
 
 Đọc `testcases/$1.yaml`, chạy, ghi `results/$1-r<N>.yaml`.
 
@@ -16,7 +16,7 @@ không đối chiếu được khi khách hỏi.
 
 ## Round >= 2 phải có `--scope`
 
-Chạy từ `work/$1/retest-scope-r<N>.md` do `/qa-retest` sinh + human duyệt.
+Chạy từ `work/$1/retest-scope-r<N>.md` do `/qa-kit:retest` sinh + human duyệt.
 Không có scope -> DỪNG. Cấm tự quyết định round 2 chạy gì.
 
 ## Tiền điều kiện — không đủ thì DỪNG
@@ -44,7 +44,7 @@ Tester tick tay, commit lại.
 Theo `${CLAUDE_PLUGIN_ROOT}/schemas/result.schema.yaml`. Bắt buộc: `round`, `build_version`, `scope_reason`.
 
 Với round >= 2, mỗi case phải có `prev_status` (lấy từ round trước).
-`prev_status: pass` + `status: fail` = **regression**, /qa-report sẽ đẩy lên đầu.
+`prev_status: pass` + `status: fail` = **regression**, /qa-kit:report sẽ đẩy lên đầu.
 
 ## status — 5 giá trị, đừng gộp
 
@@ -64,4 +64,4 @@ Gộp `blocked` vào `skipped` -> giấu rủi ro.
 - Chạy khi env không phải test
 - Ghi DB. `verify.db_query` chỉ SELECT.
 - Sửa `testcases/$1.yaml` ở bước này. Run là read-only với test case.
-- Tự chạy /qa-eval sau khi xong.
+- Tự chạy /qa-kit:eval sau khi xong.

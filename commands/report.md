@@ -4,7 +4,7 @@ argument-hint: <module> [round]
 allowed-tools: Read, Write
 ---
 
-# /qa-report $1
+# /qa-kit:report $1
 
 Đọc `results/$1-r*.yaml` -> `reports/$1-r<N>-report.md`. **Read-only.**
 

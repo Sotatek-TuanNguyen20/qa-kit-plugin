@@ -7,7 +7,7 @@
 
 Mỗi bug lọt qua design (khách chỉ ra, hoặc lọt tới UAT/production):
 1. Hỏi: **観点 nào đáng lẽ bắt được nó?**
-2. Có trong viewpoints chung rồi -> không phải lỗi 観点, là lỗi apply. Xem lại /qa-design.
+2. Có trong viewpoints chung rồi -> không phải lỗi 観点, là lỗi apply. Xem lại /qa-kit:design.
 3. Chưa có -> thêm vào đây.
 
 ## Promote lên plugin

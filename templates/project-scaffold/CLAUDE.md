@@ -1,6 +1,6 @@
 # qa-kit — Test design + execution cho QC
 
-Dự án: **<PROJECT_NAME>** — `/qa-init` điền.
+Dự án: **<PROJECT_NAME>** — `/qa-kit:init` điền.
 
 **Chuẩn:** ISTQB/JSTQB (từ vựng + khung phase) + VSTeP (テスト観点).
 Ba chỗ cố ý lệch chuẩn, có lý do: `${CLAUDE_PLUGIN_ROOT}/context/standards-mapping.md`.
@@ -102,11 +102,11 @@ blocked = chưa test được (bug khác chặn). Nhiều blocked + pass rate ca
 
 ## Pipeline
 
-/qa-kit:qa-design <module>        -> testcases/<m>.yaml + gap + coverage -> HUMAN REVIEW
-/qa-kit:qa-run <module>           -> results/<m>-r<N>.yaml  (gắn build_version)
-/qa-kit:qa-eval <module>          -> triage -> routing (KHÔNG sửa gì)
-/qa-kit:qa-report <module>        -> reports/  (regression lên đầu)
-/qa-kit:qa-retest <module> <build>-> scope round N+1 -> HUMAN REVIEW -> /qa-kit:qa-run
+/qa-kit:design <module>        -> testcases/<m>.yaml + gap + coverage -> HUMAN REVIEW
+/qa-kit:run <module>           -> results/<m>-r<N>.yaml  (gắn build_version)
+/qa-kit:eval <module>          -> triage -> routing (KHÔNG sửa gì)
+/qa-kit:report <module>        -> reports/  (regression lên đầu)
+/qa-kit:retest <module> <build>-> scope round N+1 -> HUMAN REVIEW -> /qa-kit:run
 
 ## Cấm
 

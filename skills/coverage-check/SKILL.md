@@ -19,7 +19,7 @@ sao (đang chờ BrSE trả lời, hay đơn giản chưa ai review qua).
 - **Trục coverage = section của doc** (giá trị dùng trong `trace[]`, dạng
   `DD-X.Y`), **KHÔNG PHẢI** `category.large/medium/small` (đó là trục business
   flow, view của tester — khác trục, không trộn lẫn). Quyết định này đã có sẵn
-  trong `commands/qa-design.md` ("X/Y section đã có case trace tới").
+  trong `commands/design.md` ("X/Y section đã có case trace tới").
 - **Tính ở leaf section** — section con nhất theo heading numbering. Case
   trace tới `DD-2` không tự động coi `DD-2.1` là đã covered nếu `DD-2.1` là
   section con của `DD-2` và không case nào trace thẳng tới nó.

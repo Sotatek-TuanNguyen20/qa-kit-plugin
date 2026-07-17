@@ -4,7 +4,7 @@ argument-hint: <module> [round]
 allowed-tools: Read, Write
 ---
 
-# /qa-eval $1
+# /qa-kit:eval $1
 
 Đọc `results/$1-r<N>.yaml`, phân loại từng fail, ghi lại. **Không sửa bất cứ thứ gì.**
 
@@ -58,7 +58,7 @@ D_env        0
 E_spec       0
 ```
 
-Rồi DỪNG. Không tự tạo ticket, không tự gửi ai, không chạy /qa-report.
+Rồi DỪNG. Không tự tạo ticket, không tự gửi ai, không chạy /qa-kit:report.
 
 ## Cấm
 

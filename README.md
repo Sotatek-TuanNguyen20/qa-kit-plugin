@@ -17,15 +17,15 @@ Không đọc source code. Không phải UT. Không phải view của dev.
 ```bash
 mkdir qa-project-a && cd qa-project-a
 claude
-> /qa-kit:qa-init project-a          # scaffold 1 lần
+> /qa-kit:init project-a          # scaffold 1 lần
 # comtor bỏ doc vào docs/, xin dev DDL vào db/
-> /qa-kit:qa-design login            # → testcases/login.yaml + gap + coverage
+> /qa-kit:design login            # → testcases/login.yaml + gap + coverage
 # HUMAN REVIEW → merge
-> /qa-kit:qa-run login --build=v1.2.3
-> /qa-kit:qa-eval login              # triage → routing
-> /qa-kit:qa-report login
+> /qa-kit:run login --build=v1.2.3
+> /qa-kit:eval login              # triage → routing
+> /qa-kit:report login
 # dev fix
-> /qa-kit:qa-retest login v1.2.4     # scope = retest_failed + REGRESSION
+> /qa-kit:retest login v1.2.4     # scope = retest_failed + REGRESSION
 ```
 
 ## Ranh giới plugin ↔ dự án
@@ -35,12 +35,12 @@ claude
 | commands, skills, tools, schemas | ✅                 |                     |
 | `context/viewpoints.md` (chung)  | ✅                 |                     |
 | `context/conventions.md`         | ✅                 |                     |
-| CLAUDE.md, .claude/settings.json | template           | ✅ `/qa-init` sinh  |
+| CLAUDE.md, .claude/settings.json | template           | ✅ `/qa-kit:init` sinh  |
 | `context/viewpoints-local.md`    |                    | ✅ 観点 riêng dự án |
 | docs/ db/ testcases/ results/    |                    | ✅                  |
 
-**Plugin KHÔNG đóng gói được CLAUDE.md và settings.json** — đó là lý do `/qa-init` tồn tại.
-Bỏ qua `/qa-init` = có command nhưng không có guardrail.
+**Plugin KHÔNG đóng gói được CLAUDE.md và settings.json** — đó là lý do `/qa-kit:init` tồn tại.
+Bỏ qua `/qa-kit:init` = có command nhưng không có guardrail.
 
 ## Hai tầng viewpoints
 
@@ -69,12 +69,12 @@ Tỷ lệ test case merge không sửa, theo module. <60% → bơm `viewpoints.m
 
 | Phase (ISTQB)         | Command                   |     |
 | --------------------- | ------------------------- | --- |
-| —                     | `/qa-init`                | ✅  |
-| 3-4 Analysis + Design | `/qa-design`              | ✅  |
-| 5 Implementation      | `/qa-ready` `/qa-data`    | ⬜  |
-| 6 Execution           | `/qa-run` `/qa-eval`      | ✅  |
-| 2 Monitoring          | `/qa-report` `/qa-retest` | ✅  |
-| 7 Completion          | `/qa-complete`            | ⬜  |
+| —                     | `/qa-kit:init`                | ✅  |
+| 3-4 Analysis + Design | `/qa-kit:design`              | ✅  |
+| 5 Implementation      | `/qa-kit:ready` `/qa-kit:data`    | ⬜  |
+| 6 Execution           | `/qa-kit:run` `/qa-kit:eval`      | ✅  |
+| 2 Monitoring          | `/qa-kit:report` `/qa-kit:retest` | ✅  |
+| 7 Completion          | `/qa-kit:complete`            | ⬜  |
 
 Skills: `testcase-generate` ✅ `test-triage` ✅ `gap-report` ✅ `coverage-check` ✅ | `scenario-map` `viewpoint-apply` `detail-fill` ⬜
 

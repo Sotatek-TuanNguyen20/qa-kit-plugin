@@ -50,7 +50,7 @@ Boundary của nghiệp vụ chính = **P1**, không phải P3. Đây là chỗ 
 
 ## Definition of Done — 1 module
 
-- [ ] `/qa-design` chạy không bật machine gate
+- [ ] `/qa-kit:design` chạy không bật machine gate
 - [ ] gap-report đã gửi BrSE, P1 đã có câu trả lời
 - [ ] coverage-check: không còn section nào 0 case (hoặc có lý do ghi rõ)
 - [ ] Human review xong, merge vào main

@@ -4,7 +4,7 @@ argument-hint: <module> <new_build_version>
 allowed-tools: Read, Write
 ---
 
-# /qa-retest $1
+# /qa-kit:retest $1
 
 Round N kết thúc, dev đã fix, có build mới. Câu hỏi: **round N+1 chạy những case nào?**
 
@@ -63,4 +63,4 @@ Cảnh báo:
 - BUG-014 không có khai báo 影響範囲 -> scope mở rộng cả category.large "Nghiệp vụ đăng nhập"
 ```
 
-Rồi DỪNG. Human duyệt scope trước khi `/qa-run`.
+Rồi DỪNG. Human duyệt scope trước khi `/qa-kit:run`.

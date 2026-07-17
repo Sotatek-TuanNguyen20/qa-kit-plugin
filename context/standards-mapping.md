@@ -21,12 +21,12 @@
 | # | ISTQB | JSTQB (gửi khách) | qa-kit | Trạng thái |
 |---|---|---|---|---|
 | 1 | Test planning | テスト計画 | — | Lead làm tay, ngoài kit |
-| 2 | Test monitoring & control | テスト監視・コントロール | `/qa-report` | ✅ |
-| 3 | Test analysis | テスト分析 | `/qa-design` b1–2 | ✅ |
-| 4 | Test design | テスト設計 | `/qa-design` b3–4 | ✅ |
-| 5 | Test implementation | テスト実装 | `/qa-ready` `/qa-data` | ⚠️ **chưa làm** |
-| 6 | Test execution | テスト実行 | `/qa-run` `/qa-eval` | ✅ |
-| 7 | Test completion | テスト完了 | `/qa-complete` | ⚠️ **chưa làm** |
+| 2 | Test monitoring & control | テスト監視・コントロール | `/qa-kit:report` | ✅ |
+| 3 | Test analysis | テスト分析 | `/qa-kit:design` b1–2 | ✅ |
+| 4 | Test design | テスト設計 | `/qa-kit:design` b3–4 | ✅ |
+| 5 | Test implementation | テスト実装 | `/qa-kit:ready` `/qa-kit:data` | ⚠️ **chưa làm** |
+| 6 | Test execution | テスト実行 | `/qa-kit:run` `/qa-kit:eval` | ✅ |
+| 7 | Test completion | テスト完了 | `/qa-kit:complete` | ⚠️ **chưa làm** |
 
 ## Từ vựng: qa-kit ↔ ISTQB ↔ JSTQB
 
