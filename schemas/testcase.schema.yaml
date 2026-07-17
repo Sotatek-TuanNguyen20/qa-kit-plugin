@@ -1,0 +1,149 @@
+# testcase.schema.yaml
+# Source of truth cho toàn bộ test case. Excel chỉ là build artifact sinh ra từ đây.
+# Ngôn ngữ: TIẾNG VIỆT 100%. Comtor dịch DD/spec -> VI TRƯỚC khi vào repo này.
+# Tiếng Nhật NGOÀI SCOPE. docs/ chỉ chứa bản VI đã dịch.
+# Nguyên tắc bất di bất dịch:
+#   - condition/viewpoint: ĐƯỢC vượt ngoài doc (đây là view của tester)
+#   - expected:            BẮT BUỘC có evidence từ doc. Không có -> không phải test case, là gap.
+#   - evidence:            IMMUTABLE. Không sửa được ở loop. Đây là thứ chặn agent
+#                          sửa expected cho khớp actual (= tự gian lận).
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: TestCase
+type: object
+required: [id, trace, test_level, category, viewpoint, condition_vi, expected_vi, evidence]
+additionalProperties: false
+
+properties:
+
+  id:
+    type: string
+    pattern: "^(ST|IT)-[A-Z0-9]+-[0-9]{3}$"
+    description: "VD: IT-LOGIN-003. Prefix phải khớp test_level."
+
+  trace:
+    type: array
+    minItems: 1
+    items:
+      type: string
+      pattern: "^(BD|DD)-[0-9]+(\\.[0-9]+)*$"
+    description: >
+      Section của doc mà case này phục vụ. Không có trace = reject.
+      ST phải trace về BD, IT phải trace về DD.
+
+  test_level:
+    type: string
+    enum: [ST, IT]
+
+  # --- 大項目/中項目/小項目 -----------------------------------------------
+  # LƯU Ý: bám business flow, KHÔNG bám mục lục DD.
+  # Nếu 3 cột này copy y hệt heading của DD -> đang làm sai, đó là view của dev.
+  category:
+    type: object
+    required: [large, medium, small]
+    additionalProperties: false
+    properties:
+      large:  { type: string }   # VD: "Nghiệp vụ đăng nhập"
+      medium: { type: string }
+      small:  { type: string }
+
+  viewpoint:
+    type: string
+    description: "Phải là ID có thật trong context/viewpoints.md. VD: DATA-03, TIMING-01"
+    pattern: "^(BIZ|USER|DATA|TIMING|ENV|IMPACT)-[0-9]{2}$"
+
+  precondition_vi:
+    type: array
+    items: { type: string }
+
+  condition_vi:
+    type: string
+    description: "Điều kiện test. ĐƯỢC phép vượt ngoài doc — đây là chỗ tester tư duy."
+
+  steps:
+    type: array
+    items:
+      type: object
+      required: [action_vi]
+      properties:
+        action_vi: { type: string }
+        data:      { type: object }
+
+  expected_vi:
+    type: string
+    description: "BẮT BUỘC suy ra được từ evidence. Cấm suy đoán."
+
+  # --- guardrail chống bịa ------------------------------------------------
+  test_basis:
+    type: string
+    description: >
+      Tài liệu nguồn (ISTQB: test basis / JSTQB: テストベース).
+      VD: "DD_v1.2_login.md". Khác `evidence` — đó là trích dẫn CỤ THỂ trong tài liệu này.
+      Cần cả 2: test_basis để trace tài liệu, evidence để trace câu chữ.
+
+  evidence:
+    type: object
+    required: [section, quote, source_type]
+    additionalProperties: false
+    properties:
+      section:
+        type: string
+        description: "VD: 'DD-3.2.1 表2'"
+      quote:
+        type: string
+        minLength: 1
+        description: >
+          Trích NGUYÊN VĂN từ test_basis. KHÔNG paraphrase, KHÔNG tóm tắt.
+          Không trích được -> gap-report, KHÔNG tạo case.
+          GHI CHÚ: field này KHÔNG có trong ISTQB. Là guardrail riêng cho ngữ cảnh AI —
+          xem context/standards-mapping.md. IMMUTABLE, cấm sửa ở /qa-eval.
+      source_type:
+        type: string
+        enum: [spec, dd, db_definition, message_list, screen_item]
+        description: "db_definition = từ DDL/ERD. Nguồn tin cậy cao cho boundary."
+      operator:
+        type: object
+        description: >
+          BẮT BUỘC khi viewpoint = DATA-01 (boundary).
+          Lý do: bản dịch VI của comtor hay mất toán tử ("trên 8 ký tự" = >8 hay >=8?).
+          Không suy diễn từ văn xuôi -> không rõ thì gap-report, hỏi comtor/BrSE.
+        properties:
+          min:      { type: number }
+          min_op:   { type: string, enum: [">", ">="] }
+          max:      { type: number }
+          max_op:   { type: string, enum: ["<", "<="] }
+        example:
+          min: 8
+          min_op: ">="
+          max: 32
+          max_op: "<="
+      note_vi:
+        type: string
+
+  priority:
+    type: string
+    enum: [P1, P2, P3]
+
+  tags:
+    type: array
+    items: { type: string }   # smoke, regression, ...
+
+  automatable:
+    type: boolean
+    description: "true -> harness sinh script + chạy. false -> checklist cho tester tick tay."
+
+  verify:
+    type: array
+    description: "Cách harness xác nhận expected. Rỗng -> case chỉ chạy tay được."
+    items:
+      type: object
+      properties:
+        method:
+          type: string
+          enum: [ui_text, ui_visible, http_status, http_body, db_query]
+        target: { type: string }
+        expect: {}
+        db_readonly:
+          type: boolean
+          const: true
+          description: "db_query BẮT BUỘC read-only, BẮT BUỘC test env. Cấm prod, cấm ghi."

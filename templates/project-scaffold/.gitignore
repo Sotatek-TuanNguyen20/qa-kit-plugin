@@ -1,0 +1,7 @@
+work/
+out/
+results/**/screenshots/
+.playwright/
+config/env.local.yaml
+node_modules/
+*.log

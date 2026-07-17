@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(../**/src/**)",
+      "Read(**/*.java)",
+      "Read(**/*.ts)",
+      "Read(**/*.tsx)",
+      "Read(**/*.cs)",
+      "Read(**/*.php)",
+      "Bash(git clone*)",
+      "Bash(*psql*prod*)",
+      "Bash(*mysql*prod*)"
+    ],
+    "allow": [
+      "Read(./docs/**)",
+      "Read(./context/**)",
+      "Read(./testcases/**)",
+      "Read(./schemas/**)",
+      "Read(./results/**)",
+      "Read(./db/**)",
+      "Bash(python3 tools/*)",
+      "Bash(npx playwright test*)"
+    ]
+  },
+  "_note": [
+    "db/ chua DDL, ERD, constraint -> design time, ALLOW.",
+    "*.sql KHONG deny vi DDL la input hop le. Nhung src/** van deny.",
+    "Run-time DB: read-only + test env. Enforce o tools/harness.py, khong phai o day."
+  ]
+}

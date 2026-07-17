@@ -1,0 +1,73 @@
+# result.schema.yaml
+# Kết quả 1 round chạy test. File: results/<module>-r<N>.yaml
+#
+# NGUYÊN TẮC: test case bất biến, KẾT QUẢ gắn với (round, build).
+# Không có 2 field này -> không trả lời được "case này pass ở build nào?"
+# = câu khách hỏi nhiều nhất.
+
+type: object
+required: [module, round, build_version, env, executed_at, cases]
+
+properties:
+
+  module:        { type: string }
+  round:         { type: integer, minimum: 1 }
+  build_version:
+    type: string
+    description: "BẮT BUỘC. Kết quả không gắn build = kết quả vô nghĩa."
+  env:
+    type: string
+    enum: [test, staging]      # KHÔNG có prod. Cố ý.
+  executed_at:   { type: string, format: date-time }
+  executed_by:   { type: string }
+
+  scope_reason:
+    type: string
+    enum: [full, retest_failed, regression, spot]
+    description: >
+      Vì sao round này chạy đúng những case này. Round >= 2 BẮT BUỘC ghi.
+      retest_failed  = case fail round trước
+      regression     = case đang pass nhưng nằm vùng ảnh hưởng của fix
+      Thiếu 'regression' ở round >= 2 -> đang bỏ sót rủi ro fix phá chỗ khác.
+
+  cases:
+    type: array
+    items:
+      type: object
+      required: [id, status]
+      properties:
+        id: { type: string }
+        status:
+          type: string
+          enum: [pass, fail, blocked, skipped, not_run]
+          description: >
+            blocked = không chạy được vì bug khác chặn đường (KHÁC fail)
+            skipped = cố ý bỏ, phải có skip_reason
+            not_run = chưa tới lượt. Đếm vào 未消化.
+        actual: { type: string }
+        skip_reason: { type: string }
+
+        triage:
+          type: string
+          enum: [A_bug, B_testcase, C_script, D_env, E_spec]
+          description: "BẮT BUỘC khi status=fail. Dùng để ROUTING, không để fix."
+        triage_confidence:
+          type: string
+          enum: [high, low]
+        bug_id:
+          type: string
+          description: "Link sang bug tracker khi triage=A_bug"
+
+        blocked_by:
+          type: string
+          description: "bug_id đang chặn. Bắt buộc khi status=blocked."
+
+        evidence_ref:
+          type: array
+          items: { type: string }   # screenshot, log
+
+        prev_status:
+          type: string
+          description: >
+            Status của case này ở round trước.
+            pass -> fail = REGRESSION. Cờ đỏ, ưu tiên cao nhất trong report.

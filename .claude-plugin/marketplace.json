@@ -1,0 +1,13 @@
+{
+  "name": "qa-internal",
+  "owner": { "name": "tuannafed" },
+  "plugins": [
+    {
+      "name": "qa-kit",
+      "source": "./",
+      "description": "Workflow QC: sinh test case tu spec/DD/DB -> chay -> triage -> bao cao.",
+      "category": "testing",
+      "tags": ["qa", "istqb", "jstqb", "test-design", "offshore"]
+    }
+  ]
+}
