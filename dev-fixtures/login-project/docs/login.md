@@ -14,3 +14,8 @@ link reset. Chưa có thêm chi tiết trong tài liệu này.
 
 ## DD-4. Đăng nhập SSO
 Đăng nhập qua SSO nội bộ công ty. Tài liệu này chưa mô tả field/màn hình cụ thể.
+
+## DD-5. Đăng xuất
+Người dùng bấm nút "Đăng xuất" trên thanh điều hướng để kết thúc phiên đăng
+nhập. Tài liệu chưa nói rõ đăng xuất có xoá session ở tất cả thiết bị hay chỉ
+xoá session ở thiết bị hiện tại.

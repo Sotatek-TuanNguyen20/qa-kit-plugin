@@ -4,6 +4,8 @@
 # - GAP-002: gap_type missing_message_list -> floor P1.
 # - GAP-003: gap_type missing_operator trên case ưu tiên thấp -> floor P2
 #   (không tụt xuống P3 dù case gốc không quan trọng).
+# - GAP-004: status: answered -> test nhánh coverage-check "đã có câu trả lời,
+#   chờ sinh case" và nhánh gap-report "Đã trả lời, chờ sinh case" (DD-5).
 # DD-3 KHÔNG có entry nào ở đây -> coverage-check phải báo "CHƯA CÓ GAP".
 
 - id: GAP-001
@@ -42,3 +44,15 @@
   question_vi: "'Trên 32 ký tự' là <=32 hay <32? Cần DDL hoặc xác nhận BrSE."
   status: open
   answer_vi: ""
+- id: GAP-004
+  raised_at: "2026-07-17T09:15:00+07:00"
+  raised_by: testcase-generate
+  step: 4
+  trace: [DD-5]
+  condition_ref: "Đăng xuất - phạm vi xoá session"
+  gap_type: ambiguous
+  severity: P2
+  description_vi: "DD-5 không rõ đăng xuất có xoá session ở mọi thiết bị hay chỉ thiết bị hiện tại."
+  question_vi: "Đăng xuất có xoá session ở tất cả thiết bị hay chỉ thiết bị hiện tại đang dùng?"
+  status: answered
+  answer_vi: "Chỉ xoá session ở thiết bị hiện tại; các thiết bị khác vẫn giữ đăng nhập cho tới khi token hết hạn."
