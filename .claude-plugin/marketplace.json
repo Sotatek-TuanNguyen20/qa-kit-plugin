@@ -1,6 +1,6 @@
 {
   "name": "qa-internal",
-  "owner": { "name": "tuannafed" },
+  "owner": { "name": "Sotatek-TuanNguyen20" },
   "plugins": [
     {
       "name": "qa-kit",
