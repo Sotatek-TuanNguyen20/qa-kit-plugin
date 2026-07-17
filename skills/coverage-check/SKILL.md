@@ -55,7 +55,9 @@ sao (đang chờ BrSE trả lời, hay đơn giản chưa ai review qua).
      nó — chỉ section con (leaf) của nó mới được tính.
    - Không có, không loại trừ được → **section CHƯA có case**:
      - Tra `work/$1/gaps.yaml`: có entry nào `trace` khớp section này không?
-       - Có → ghi "đã biết, đang chờ trả lời <id gap>".
+       - Có, entry đó `status: open` → ghi "đã biết, đang chờ trả lời <id gap>".
+       - Có, entry đó `status: answered` → ghi "đã có câu trả lời (<id gap>),
+         chờ sinh case" (đã trả lời rồi nhưng chưa ai tạo case cho nó).
        - Không → ghi "**CHƯA CÓ GAP — có thể bị bỏ sót**".
 4. Coverage % = (số section covered) / (tổng section - số section loại trừ).
 5. Ghi `reports/$1-coverage.md`.
@@ -72,7 +74,9 @@ sao (đang chờ BrSE trả lời, hay đơn giản chưa ai review qua).
 | Coverage | <covered>/<total sau loại trừ> section (<%>) |
 
 ## Section CHƯA có case
-- <section id> (<mô tả ngắn>) — <đã biết: gap id> | <CHƯA CÓ GAP, có thể bị bỏ sót>
+- <section id> (<mô tả ngắn>) — đã biết, đang chờ trả lời <gap id>
+- <section id> (<mô tả ngắn>) — đã có câu trả lời (<gap id>), chờ sinh case
+- <section id> (<mô tả ngắn>) — CHƯA CÓ GAP, có thể bị bỏ sót
 
 ## Section loại trừ (không cần case)
 - <section id> (<mô tả ngắn>) — <lý do loại trừ>
