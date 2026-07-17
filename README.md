@@ -12,8 +12,6 @@ Không đọc source code. Không phải UT. Không phải view của dev.
 /plugin install qa-kit@qa-internal
 ```
 
-Repo public — không cần `gh auth login`.
-
 ## Dùng
 
 ```bash
@@ -32,14 +30,14 @@ claude
 
 ## Ranh giới plugin ↔ dự án
 
-| | Plugin (read-only) | Repo dự án |
-|---|---|---|
-| commands, skills, tools, schemas | ✅ | |
-| `context/viewpoints.md` (chung) | ✅ | |
-| `context/conventions.md` | ✅ | |
-| CLAUDE.md, .claude/settings.json | template | ✅ `/qa-init` sinh |
-| `context/viewpoints-local.md` | | ✅ 観点 riêng dự án |
-| docs/ db/ testcases/ results/ | | ✅ |
+|                                  | Plugin (read-only) | Repo dự án          |
+| -------------------------------- | ------------------ | ------------------- |
+| commands, skills, tools, schemas | ✅                 |                     |
+| `context/viewpoints.md` (chung)  | ✅                 |                     |
+| `context/conventions.md`         | ✅                 |                     |
+| CLAUDE.md, .claude/settings.json | template           | ✅ `/qa-init` sinh  |
+| `context/viewpoints-local.md`    |                    | ✅ 観点 riêng dự án |
+| docs/ db/ testcases/ results/    |                    | ✅                  |
 
 **Plugin KHÔNG đóng gói được CLAUDE.md và settings.json** — đó là lý do `/qa-init` tồn tại.
 Bỏ qua `/qa-init` = có command nhưng không có guardrail.
@@ -69,14 +67,14 @@ Tỷ lệ test case merge không sửa, theo module. <60% → bơm `viewpoints.m
 
 ## Trạng thái
 
-| Phase (ISTQB) | Command | |
-|---|---|---|
-| — | `/qa-init` | ✅ |
-| 3-4 Analysis + Design | `/qa-design` | ✅ |
-| 5 Implementation | `/qa-ready` `/qa-data` | ⬜ |
-| 6 Execution | `/qa-run` `/qa-eval` | ✅ |
-| 2 Monitoring | `/qa-report` `/qa-retest` | ✅ |
-| 7 Completion | `/qa-complete` | ⬜ |
+| Phase (ISTQB)         | Command                   |     |
+| --------------------- | ------------------------- | --- |
+| —                     | `/qa-init`                | ✅  |
+| 3-4 Analysis + Design | `/qa-design`              | ✅  |
+| 5 Implementation      | `/qa-ready` `/qa-data`    | ⬜  |
+| 6 Execution           | `/qa-run` `/qa-eval`      | ✅  |
+| 2 Monitoring          | `/qa-report` `/qa-retest` | ✅  |
+| 7 Completion          | `/qa-complete`            | ⬜  |
 
 Skills: `testcase-generate` ✅ `test-triage` ✅ | `scenario-map` `viewpoint-apply`
 `detail-fill` `gap-report` `coverage-check` ⬜
