@@ -37,6 +37,11 @@ e2e/
 .gitignore
 ```
 
+Sau khi copy, thay TOÀN BỘ placeholder `<PROJECT_NAME>` trong `CLAUDE.md` và
+`context/project-glossary.md` bằng tên dự án thật (`$1`). Copy nguyên văn mà
+không thay là bug — 2 file đó sẽ còn nguyên literal `<PROJECT_NAME>`, vô nghĩa
+với người đọc sau này.
+
 ## Hai tầng viewpoints
 
 | | Ở đâu | Ai sửa | Vòng đời |
