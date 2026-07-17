@@ -388,8 +388,13 @@ sao (đang chờ BrSE trả lời, hay đơn giản chưa ai review qua).
 2. Gom union `trace[]` từ `testcases/$1.yaml` → set section đã có ít nhất 1 case.
 3. Với mỗi section:
    - Có trong set ở bước 2 → **covered**.
-   - Không có, nhưng là section tổng quan/glossary không có behavior cụ thể
-     (đọc nội dung để tự phán đoán) → **loại trừ**, ghi lý do.
+   - Không có, nhưng là section tổng quan/glossary không có behavior cụ thể,
+     **hoặc chỉ là heading cha đóng vai trò gộp nhóm section con (không có nội
+     dung/rule riêng của chính nó, chỉ dẫn thẳng xuống section con)** — đọc nội
+     dung để tự phán đoán → **loại trừ**, ghi lý do (vd "chỉ gộp nhóm DD-2.1,
+     không có rule riêng"). Container-heading loại này KHÔNG tính vào mẫu số,
+     KHÔNG liệt vào danh sách "CHƯA có case" dù không case nào trace thẳng tới
+     nó — chỉ section con (leaf) của nó mới được tính.
    - Không có, không loại trừ được → **section CHƯA có case**:
      - Tra `work/$1/gaps.yaml`: có entry nào `trace` khớp section này không?
        - Có → ghi "đã biết, đang chờ trả lời <id gap>".
@@ -437,10 +442,13 @@ ghi `dev-fixtures/login-project/reports/login-coverage.md`.
 
 Expected:
 - `DD-1` → loại trừ (tổng quan).
+- `DD-2` → loại trừ (heading cha, chỉ gộp nhóm `DD-2.1`, không có rule riêng —
+  KHÔNG được liệt vào "CHƯA có case" dù không case nào trace thẳng tới `DD-2`).
 - `DD-2.1` → covered (có case `IT-LOGIN-001`).
 - `DD-3` → CHƯA CÓ GAP (không entry nào trong `gaps.yaml` trace tới `DD-3`).
 - `DD-4` → đã biết, đang chờ trả lời `GAP-001`.
-- Coverage: 1/3 section (loại trừ `DD-1` khỏi mẫu số) = 33%.
+- Coverage: 1/3 section (mẫu số chỉ gồm `DD-2.1`, `DD-3`, `DD-4` sau khi loại
+  `DD-1` và `DD-2`) = 33%.
 
 - [ ] **Step 3: Đối chiếu output với expected, sửa SKILL.md nếu lệch**
 
