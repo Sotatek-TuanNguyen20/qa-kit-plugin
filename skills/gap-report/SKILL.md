@@ -52,6 +52,25 @@ severity = max(priority của case/condition bị chặn, floor theo gap_type)
 
 P1 > P2 > P3 khi lấy max.
 
+## Cách gán `id` khi APPEND entry mới (tham chiếu cho các skill khác)
+
+Cùng vai trò với bảng floor ở trên — quy tắc chung cho MỌI skill append vào
+`gaps.yaml` (không riêng `gap-report`), để tránh trùng ID khi nhiều skill khác
+nhau (`scenario-map`, `viewpoint-apply`, `detail-fill`, `testcase-generate`) cùng
+ghi vào 1 file qua các bước của cùng 1 lần chạy `/qa-kit:design`:
+
+1. Đọc toàn bộ `work/$1/gaps.yaml` hiện có (kể cả entry `status: answered`).
+2. Tìm số lớn nhất trong các `GAP-NNN` đã tồn tại. File chưa có hoặc rỗng →
+   bắt đầu từ `GAP-001`.
+3. Entry mới dùng `GAP-<số lớn nhất + 1>`, đệm 3 chữ số (`GAP-004`, không phải
+   `GAP-4`).
+4. **Không bao giờ tái sử dụng ID đã dùng** — kể cả khi gap đó đã
+   `status: answered` hoặc đã sinh case xong. ID có thể đã được BrSE/tester
+   tham chiếu ở chỗ khác (report cũ, hội thoại); tái dùng sẽ gây nhầm lẫn.
+5. Đây là quy tắc tuần tự, không phải khoá đồng thời (concurrency lock) — các
+   bước trong chain `/qa-kit:design` chạy tuần tự trong cùng 1 phiên Claude,
+   không có 2 skill nào ghi vào file cùng lúc.
+
 ## Schema 1 entry trong `work/$1/gaps.yaml`
 
 ```yaml

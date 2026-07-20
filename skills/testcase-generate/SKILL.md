@@ -64,7 +64,9 @@ Thiếu 1–3 → finding lớn, gap-report ngay.
 5. Không tìm được căn cứ → **dừng, append 1 entry vào `work/$1/gaps.yaml`**
    theo schema ở `skills/gap-report/SKILL.md` (`gap_type` phù hợp:
    `missing_evidence`/`contradiction`/`missing_operator`/`missing_message_list`/
-   `missing_screen_item`; `severity` tính theo bảng floor trong file đó),
+   `missing_screen_item`; `severity` tính theo bảng floor trong file đó; `id`
+   gán theo quy tắc "Cách gán id khi APPEND entry mới" cũng trong file đó —
+   đọc `gaps.yaml` hiện có, lấy số lớn nhất + 1, không tự đặt `GAP-001` mù),
    không tạo case.
 6. Validate schema trước khi ghi file.
 
