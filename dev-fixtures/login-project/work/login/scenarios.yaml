@@ -1,0 +1,30 @@
+- large: "Nghiệp vụ đăng nhập"
+  trace: [DD-2, DD-2.1, DD-4]
+  actor: "Người dùng đã có tài khoản"
+  situations:
+    - medium: "Đăng nhập bằng tài khoản/mật khẩu"
+      trace: [DD-2, DD-2.1]
+      trigger_vi: "Nhập username và mật khẩu trên màn hình đăng nhập, bấm nút đăng nhập"
+      precondition_vi: ["Tài khoản đã được cấp, đang ở trạng thái hoạt động"]
+    - medium: "Đăng nhập qua SSO nội bộ công ty"
+      trace: [DD-4]
+      trigger_vi: "Chọn phương thức đăng nhập SSO trên màn hình đăng nhập"
+      precondition_vi: []
+
+- large: "Nghiệp vụ quên mật khẩu"
+  trace: [DD-3]
+  actor: "Người dùng đã có tài khoản nhưng quên mật khẩu"
+  situations:
+    - medium: "Yêu cầu đặt lại mật khẩu qua email"
+      trace: [DD-3]
+      trigger_vi: "Bấm liên kết 'Quên mật khẩu' trên màn hình đăng nhập"
+      precondition_vi: []
+
+- large: "Nghiệp vụ đăng xuất"
+  trace: [DD-5]
+  actor: "Người dùng đang trong phiên đăng nhập"
+  situations:
+    - medium: "Đăng xuất khỏi hệ thống qua thanh điều hướng"
+      trace: [DD-5]
+      trigger_vi: "Bấm nút 'Đăng xuất' trên thanh điều hướng"
+      precondition_vi: ["Đang trong phiên đăng nhập hợp lệ"]
