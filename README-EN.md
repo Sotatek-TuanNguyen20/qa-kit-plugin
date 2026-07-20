@@ -78,7 +78,7 @@ Merge-without-edit rate of test cases, per module. <60% → feed more into `view
 
 Skills: `testcase-generate` ✅ `test-triage` ✅ `gap-report` ✅ `coverage-check` ✅ | `scenario-map` `viewpoint-apply` `detail-fill` ⬜
 
-Tools: `harness.py` `validate.py` `export_excel.py` ⬜
+Tools: `export_excel.py` ✅ | `harness.py` `validate.py` ⬜
 
 ## Versioning
 
