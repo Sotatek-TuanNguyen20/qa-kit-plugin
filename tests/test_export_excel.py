@@ -174,3 +174,53 @@ def test_write_workbook_creates_summary_and_case_sheets(tmp_path):
     assert header_cell.fill.start_color.rgb in ("00305496", "FF305496")
     assert header_cell.font.bold is True
     assert sheet.freeze_panes == "A2"
+
+
+def test_write_workbook_disambiguates_sheet_names_on_real_collision(tmp_path):
+    # Two different category_large values that are distinct but share their
+    # first 25 characters, so their sanitized sheet names collide only after
+    # MAX_SHEET_NAME_LEN truncation — this is the case the existing_names
+    # threading through write_workbook()'s loop must resolve.
+    category_1 = "a" * 40
+    category_2 = "a" * 39 + "b"
+
+    # Sanity check the fixture actually reproduces a post-truncation collision
+    # (and not just two names that trivially differ).
+    assert sanitize_sheet_name("login", category_1, set()) == sanitize_sheet_name(
+        "login", category_2, set()
+    )
+
+    groups = {
+        ("login", category_1): [
+            {
+                "No": 1, "TC ID": "IT-LOGIN-001", "Medium": "A", "Small": "a",
+                "Title": "t1", "Precondition": "", "Steps": "", "Expected Result": "e1",
+                "Priority": "P1", "Trace": "", "Status": "", "Tested By": "",
+                "Date": "", "Remarks": "",
+            },
+        ],
+        ("login", category_2): [
+            {
+                "No": 1, "TC ID": "IT-LOGIN-002", "Medium": "B", "Small": "b",
+                "Title": "t2", "Precondition": "", "Steps": "", "Expected Result": "e2",
+                "Priority": "P2", "Trace": "", "Status": "", "Tested By": "",
+                "Date": "", "Remarks": "",
+            },
+        ],
+    }
+    summary_df = build_summary(groups)
+    output_path = tmp_path / "out.xlsx"
+
+    write_workbook(groups, summary_df, output_path)
+
+    wb = openpyxl.load_workbook(output_path)
+    case_sheet_names = [n for n in wb.sheetnames if n != "Summary"]
+    assert len(case_sheet_names) == 2
+    assert case_sheet_names[0] != case_sheet_names[1]
+
+    sheet_1 = wb[case_sheet_names[0]]
+    sheet_2 = wb[case_sheet_names[1]]
+    assert sheet_1.cell(row=1, column=2).value == "TC ID"
+    assert sheet_1.cell(row=2, column=2).value == "IT-LOGIN-001"
+    assert sheet_2.cell(row=1, column=2).value == "TC ID"
+    assert sheet_2.cell(row=2, column=2).value == "IT-LOGIN-002"
