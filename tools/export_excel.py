@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+import argparse
 import re
+import sys
+from pathlib import Path
 
 import pandas as pd
+import yaml
 from openpyxl.styles import Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
@@ -150,3 +154,49 @@ def write_workbook(groups: dict, summary_df: pd.DataFrame, output_path) -> None:
             df = pd.DataFrame(rows)[COLUMN_ORDER]
             df.to_excel(writer, sheet_name=sheet_name, index=False)
             _style_sheet(writer.sheets[sheet_name], len(COLUMN_ORDER))
+
+
+def load_testcases(module: str, project_root: Path) -> list:
+    path = Path(project_root) / "testcases" / f"{module}.yaml"
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Không tìm thấy testcases/{module}.yaml — kiểm tra lại tên module."
+        )
+    with path.open(encoding="utf-8") as f:
+        return yaml.safe_load(f) or []
+
+
+def main(argv: list | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Export testcases/<module>.yaml sang Excel cho QC đọc."
+    )
+    parser.add_argument("modules", nargs="+", help="Tên module (khớp file testcases/<module>.yaml)")
+    parser.add_argument("--out", default=None, help="Đường dẫn file .xlsx output")
+    args = parser.parse_args(argv)
+
+    project_root = Path.cwd()
+    cases_by_module = {}
+    for module in args.modules:
+        try:
+            cases_by_module[module] = load_testcases(module, project_root)
+        except FileNotFoundError as e:
+            print(f"Lỗi: {e}", file=sys.stderr)
+            return 1
+
+    groups = group_cases(cases_by_module)
+    summary_df = build_summary(groups)
+
+    if args.out:
+        output_path = Path(args.out)
+    elif len(args.modules) == 1:
+        output_path = Path(f"{args.modules[0]}-export.xlsx")
+    else:
+        output_path = Path("testcases-export.xlsx")
+
+    write_workbook(groups, summary_df, output_path)
+    print(f"Đã xuất: {output_path}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

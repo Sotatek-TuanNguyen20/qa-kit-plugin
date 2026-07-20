@@ -224,3 +224,115 @@ def test_write_workbook_disambiguates_sheet_names_on_real_collision(tmp_path):
     assert sheet_1.cell(row=2, column=2).value == "IT-LOGIN-001"
     assert sheet_2.cell(row=1, column=2).value == "TC ID"
     assert sheet_2.cell(row=2, column=2).value == "IT-LOGIN-002"
+
+
+import pytest
+
+from export_excel import load_testcases, main
+
+
+def test_load_testcases_raises_clear_error_when_missing(tmp_path):
+    with pytest.raises(FileNotFoundError, match="testcases/missing-module.yaml"):
+        load_testcases("missing-module", tmp_path)
+
+
+def test_main_returns_nonzero_and_prints_error_for_missing_module(tmp_path, capsys, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    exit_code = main(["missing-module"])
+    assert exit_code == 1
+    captured = capsys.readouterr()
+    assert "testcases/missing-module.yaml" in captured.err
+
+
+LOGIN_YAML = """\
+- id: IT-LOGIN-001
+  trace: [DD-2.1]
+  test_level: IT
+  category:
+    large: "Nghiệp vụ đăng nhập"
+    medium: "Xác thực password"
+    small: "Password đúng biên dưới"
+  viewpoint: DATA-01
+  precondition_vi: ["Tài khoản đã được cấp"]
+  condition_vi: "Password 8 ký tự (min)"
+  steps:
+    - action_vi: "Nhập password 8 ký tự"
+      data: {password: "Abcd1234"}
+  expected_vi: "Đăng nhập thành công"
+  evidence:
+    section: "DD-2.1"
+    quote: "Password từ 8 đến 32 ký tự"
+    source_type: db_definition
+    operator: {min: 8, min_op: ">=", max: 32, max_op: "<="}
+  priority: P1
+  tags: [smoke]
+  automatable: true
+  verify:
+    - method: ui_visible
+      target: "màn hình chính"
+      expect: true
+"""
+
+PAYMENT_YAML = """\
+- id: IT-PAYMENT-001
+  trace: [DD-5.1]
+  test_level: IT
+  category:
+    large: "Nghiệp vụ thanh toán"
+    medium: "Xử lý thẻ"
+    small: "Thẻ hợp lệ"
+  viewpoint: DATA-02
+  precondition_vi: []
+  condition_vi: "Thanh toán bằng thẻ hợp lệ"
+  steps:
+    - action_vi: "Nhập thông tin thẻ"
+  expected_vi: "Thanh toán thành công"
+  evidence:
+    section: "DD-5.1"
+    quote: "Thẻ phải còn hạn sử dụng"
+    source_type: dd
+  priority: P2
+  tags: []
+  automatable: false
+"""
+
+
+def test_main_end_to_end_multi_module(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    testcases_dir = tmp_path / "testcases"
+    testcases_dir.mkdir()
+    (testcases_dir / "login.yaml").write_text(LOGIN_YAML, encoding="utf-8")
+    (testcases_dir / "payment.yaml").write_text(PAYMENT_YAML, encoding="utf-8")
+
+    exit_code = main(["login", "payment"])
+    assert exit_code == 0
+
+    output_path = tmp_path / "testcases-export.xlsx"
+    assert output_path.exists()
+
+    wb = openpyxl.load_workbook(output_path)
+    assert "Summary" in wb.sheetnames
+    assert any(name.startswith("login_") for name in wb.sheetnames)
+    assert any(name.startswith("payment_") for name in wb.sheetnames)
+
+
+def test_main_single_module_default_output_name(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    testcases_dir = tmp_path / "testcases"
+    testcases_dir.mkdir()
+    (testcases_dir / "login.yaml").write_text(LOGIN_YAML, encoding="utf-8")
+
+    exit_code = main(["login"])
+    assert exit_code == 0
+    assert (tmp_path / "login-export.xlsx").exists()
+
+
+def test_main_respects_out_flag(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    testcases_dir = tmp_path / "testcases"
+    testcases_dir.mkdir()
+    (testcases_dir / "login.yaml").write_text(LOGIN_YAML, encoding="utf-8")
+
+    exit_code = main(["login", "--out", "custom.xlsx"])
+    assert exit_code == 0
+    assert (tmp_path / "custom.xlsx").exists()
