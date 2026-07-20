@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import re
 
+import pandas as pd
+
 FORBIDDEN_SHEET_CHARS = re.compile(r"[:\\/?*\[\]]")
 MAX_SHEET_NAME_LEN = 31
 
@@ -68,3 +70,33 @@ def group_cases(cases_by_module: dict) -> dict:
         for i, row in enumerate(rows, start=1):
             row["No"] = i
     return groups
+
+
+def build_summary(groups: dict) -> pd.DataFrame:
+    counts: dict = {}
+    modules_order: list = []
+    for (module, _category_large), rows in groups.items():
+        if module not in modules_order:
+            modules_order.append(module)
+        for row in rows:
+            priority = row.get("Priority", "")
+            counts.setdefault(priority, {}).setdefault(module, 0)
+            counts[priority][module] += 1
+
+    known_order = ["P1", "P2", "P3"]
+    priorities_order = [p for p in known_order if p in counts] + sorted(
+        p for p in counts if p not in known_order
+    )
+
+    data = []
+    for priority in priorities_order:
+        row = {"Priority": priority}
+        total = 0
+        for module in modules_order:
+            count = counts[priority].get(module, 0)
+            row[module] = count
+            total += count
+        row["Total"] = total
+        data.append(row)
+
+    return pd.DataFrame(data, columns=["Priority"] + modules_order + ["Total"])

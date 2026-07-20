@@ -111,3 +111,29 @@ def test_sanitize_sheet_name_dedupes_on_collision_after_truncation():
     assert first != second
     assert len(second) <= 31
     assert second not in existing or second == second
+
+
+from export_excel import build_summary
+
+
+def test_build_summary_counts_by_priority_and_module():
+    groups = {
+        ("login", "A"): [{"Priority": "P1"}, {"Priority": "P2"}],
+        ("payment", "B"): [{"Priority": "P1"}, {"Priority": "P1"}, {"Priority": "P3"}],
+    }
+    summary = build_summary(groups)
+
+    assert list(summary.columns) == ["Priority", "login", "payment", "Total"]
+
+    row_p1 = summary[summary["Priority"] == "P1"].iloc[0]
+    assert row_p1["login"] == 1
+    assert row_p1["payment"] == 2
+    assert row_p1["Total"] == 3
+
+    row_p2 = summary[summary["Priority"] == "P2"].iloc[0]
+    assert row_p2["login"] == 1
+    assert row_p2["payment"] == 0
+
+    row_p3 = summary[summary["Priority"] == "P3"].iloc[0]
+    assert row_p3["login"] == 0
+    assert row_p3["payment"] == 1
