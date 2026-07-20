@@ -137,3 +137,40 @@ def test_build_summary_counts_by_priority_and_module():
     row_p3 = summary[summary["Priority"] == "P3"].iloc[0]
     assert row_p3["login"] == 0
     assert row_p3["payment"] == 1
+
+
+import openpyxl
+
+from export_excel import write_workbook
+
+
+def test_write_workbook_creates_summary_and_case_sheets(tmp_path):
+    groups = {
+        ("login", "Nghiệp vụ đăng nhập"): [
+            {
+                "No": 1, "TC ID": "IT-LOGIN-001", "Medium": "A", "Small": "a",
+                "Title": "t1", "Precondition": "", "Steps": "", "Expected Result": "e1",
+                "Priority": "P1", "Trace": "", "Status": "", "Tested By": "",
+                "Date": "", "Remarks": "",
+            },
+        ],
+    }
+    summary_df = build_summary(groups)
+    output_path = tmp_path / "out.xlsx"
+
+    write_workbook(groups, summary_df, output_path)
+
+    wb = openpyxl.load_workbook(output_path)
+    assert wb.sheetnames[0] == "Summary"
+    case_sheet_names = [n for n in wb.sheetnames if n != "Summary"]
+    assert len(case_sheet_names) == 1
+    sheet = wb[case_sheet_names[0]]
+
+    assert sheet.cell(row=1, column=1).value == "No"
+    assert sheet.cell(row=1, column=2).value == "TC ID"
+    assert sheet.cell(row=2, column=2).value == "IT-LOGIN-001"
+
+    header_cell = sheet.cell(row=1, column=1)
+    assert header_cell.fill.start_color.rgb in ("00305496", "FF305496")
+    assert header_cell.font.bold is True
+    assert sheet.freeze_panes == "A2"

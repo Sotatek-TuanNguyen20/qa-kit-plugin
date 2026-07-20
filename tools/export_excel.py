@@ -5,9 +5,21 @@ from __future__ import annotations
 import re
 
 import pandas as pd
+from openpyxl.styles import Border, Font, PatternFill, Side
+from openpyxl.utils import get_column_letter
 
 FORBIDDEN_SHEET_CHARS = re.compile(r"[:\\/?*\[\]]")
 MAX_SHEET_NAME_LEN = 31
+
+COLUMN_ORDER = [
+    "No", "TC ID", "Medium", "Small", "Title", "Precondition", "Steps",
+    "Expected Result", "Priority", "Trace", "Status", "Tested By", "Date", "Remarks",
+]
+
+HEADER_FILL = PatternFill(start_color="305496", end_color="305496", fill_type="solid")
+HEADER_FONT = Font(color="FFFFFF", bold=True)
+THIN_SIDE = Side(style="thin")
+THIN_BORDER = Border(left=THIN_SIDE, right=THIN_SIDE, top=THIN_SIDE, bottom=THIN_SIDE)
 
 
 def flatten_case(case: dict) -> dict:
@@ -100,3 +112,41 @@ def build_summary(groups: dict) -> pd.DataFrame:
         data.append(row)
 
     return pd.DataFrame(data, columns=["Priority"] + modules_order + ["Total"])
+
+
+def _style_sheet(worksheet, num_columns: int) -> None:
+    for col_idx in range(1, num_columns + 1):
+        header_cell = worksheet.cell(row=1, column=col_idx)
+        header_cell.fill = HEADER_FILL
+        header_cell.font = HEADER_FONT
+
+    for row in worksheet.iter_rows(min_row=1, max_row=worksheet.max_row, max_col=num_columns):
+        for cell in row:
+            cell.border = THIN_BORDER
+
+    worksheet.freeze_panes = "A2"
+
+    for col_idx in range(1, num_columns + 1):
+        column_letter = get_column_letter(col_idx)
+        max_len = max(
+            (
+                len(str(worksheet.cell(row=r, column=col_idx).value or ""))
+                for r in range(1, worksheet.max_row + 1)
+            ),
+            default=10,
+        )
+        worksheet.column_dimensions[column_letter].width = min(max_len + 2, 60)
+
+
+def write_workbook(groups: dict, summary_df: pd.DataFrame, output_path) -> None:
+    with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
+        summary_df.to_excel(writer, sheet_name="Summary", index=False)
+        _style_sheet(writer.sheets["Summary"], len(summary_df.columns))
+
+        existing_names = {"Summary"}
+        for (module, category_large), rows in groups.items():
+            sheet_name = sanitize_sheet_name(module, category_large, existing_names)
+            existing_names.add(sheet_name)
+            df = pd.DataFrame(rows)[COLUMN_ORDER]
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
+            _style_sheet(writer.sheets[sheet_name], len(COLUMN_ORDER))
