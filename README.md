@@ -78,7 +78,7 @@ Tỷ lệ test case merge không sửa, theo module. <60% → bơm `viewpoints.m
 
 Skills: `testcase-generate` ✅ `test-triage` ✅ `gap-report` ✅ `coverage-check` ✅ | `scenario-map` `viewpoint-apply` `detail-fill` ⬜
 
-Tools: `harness.py` `validate.py` `export_excel.py` ⬜
+Tools: `export_excel.py` ✅ | `harness.py` `validate.py` ⬜
 
 ## Version
 
