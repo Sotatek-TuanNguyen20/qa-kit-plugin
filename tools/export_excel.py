@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pandas as pd
 import yaml
-from openpyxl.styles import Border, Font, PatternFill, Side
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 FORBIDDEN_SHEET_CHARS = re.compile(r"[:\\/?*\[\]]")
@@ -24,6 +24,7 @@ HEADER_FILL = PatternFill(start_color="305496", end_color="305496", fill_type="s
 HEADER_FONT = Font(color="FFFFFF", bold=True)
 THIN_SIDE = Side(style="thin")
 THIN_BORDER = Border(left=THIN_SIDE, right=THIN_SIDE, top=THIN_SIDE, bottom=THIN_SIDE)
+WRAP_ALIGNMENT = Alignment(wrap_text=True, vertical="top")
 
 
 def flatten_case(case: dict) -> dict:
@@ -127,6 +128,10 @@ def _style_sheet(worksheet, num_columns: int) -> None:
     for row in worksheet.iter_rows(min_row=1, max_row=worksheet.max_row, max_col=num_columns):
         for cell in row:
             cell.border = THIN_BORDER
+
+    for row in worksheet.iter_rows(min_row=1, max_row=worksheet.max_row, max_col=num_columns):
+        for cell in row:
+            cell.alignment = WRAP_ALIGNMENT
 
     worksheet.freeze_panes = "A2"
 

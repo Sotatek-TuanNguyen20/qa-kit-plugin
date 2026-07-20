@@ -110,7 +110,7 @@ def test_sanitize_sheet_name_dedupes_on_collision_after_truncation():
     second = sanitize_sheet_name("login", long_category, existing)
     assert first != second
     assert len(second) <= 31
-    assert second not in existing or second == second
+    assert second not in existing
 
 
 from export_excel import build_summary
@@ -149,7 +149,8 @@ def test_write_workbook_creates_summary_and_case_sheets(tmp_path):
         ("login", "Nghiệp vụ đăng nhập"): [
             {
                 "No": 1, "TC ID": "IT-LOGIN-001", "Medium": "A", "Small": "a",
-                "Title": "t1", "Precondition": "", "Steps": "", "Expected Result": "e1",
+                "Title": "t1", "Precondition": "", "Steps": "1. Bước 1\n2. Bước 2",
+                "Expected Result": "e1",
                 "Priority": "P1", "Trace": "", "Status": "", "Tested By": "",
                 "Date": "", "Remarks": "",
             },
@@ -174,6 +175,11 @@ def test_write_workbook_creates_summary_and_case_sheets(tmp_path):
     assert header_cell.fill.start_color.rgb in ("00305496", "FF305496")
     assert header_cell.font.bold is True
     assert sheet.freeze_panes == "A2"
+
+    steps_cell = sheet.cell(row=2, column=7)
+    assert steps_cell.value == "1. Bước 1\n2. Bước 2"
+    assert steps_cell.alignment.wrap_text is True
+    assert steps_cell.alignment.vertical == "top"
 
 
 def test_write_workbook_disambiguates_sheet_names_on_real_collision(tmp_path):
