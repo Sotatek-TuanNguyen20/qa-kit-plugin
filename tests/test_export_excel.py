@@ -3,7 +3,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "tools"))
 
-from export_excel import flatten_case
+from export_excel import flatten_case, group_cases, sanitize_sheet_name
 
 
 def test_flatten_case_maps_basic_fields():
@@ -58,3 +58,56 @@ def test_flatten_case_handles_no_precondition_or_data():
     assert row["Precondition"] == ""
     assert row["Steps"] == "1. Nhập thông tin thẻ"
     assert row["Trace"] == ""
+
+
+def test_group_cases_groups_by_module_and_category_large():
+    cases_by_module = {
+        "login": [
+            {
+                "id": "IT-LOGIN-001",
+                "category": {"large": "Nghiệp vụ đăng nhập", "medium": "A", "small": "a"},
+                "condition_vi": "c1", "precondition_vi": [], "steps": [],
+                "expected_vi": "e1", "priority": "P1", "trace": [],
+            },
+            {
+                "id": "IT-LOGIN-002",
+                "category": {"large": "Nghiệp vụ đăng nhập", "medium": "B", "small": "b"},
+                "condition_vi": "c2", "precondition_vi": [], "steps": [],
+                "expected_vi": "e2", "priority": "P2", "trace": [],
+            },
+            {
+                "id": "IT-LOGIN-003",
+                "category": {"large": "Nghiệp vụ quên mật khẩu", "medium": "C", "small": "c"},
+                "condition_vi": "c3", "precondition_vi": [], "steps": [],
+                "expected_vi": "e3", "priority": "P3", "trace": [],
+            },
+        ],
+    }
+    groups = group_cases(cases_by_module)
+    assert set(groups.keys()) == {
+        ("login", "Nghiệp vụ đăng nhập"),
+        ("login", "Nghiệp vụ quên mật khẩu"),
+    }
+    login_group = groups[("login", "Nghiệp vụ đăng nhập")]
+    assert len(login_group) == 2
+    assert login_group[0]["No"] == 1
+    assert login_group[0]["TC ID"] == "IT-LOGIN-001"
+    assert login_group[1]["No"] == 2
+    assert len(groups[("login", "Nghiệp vụ quên mật khẩu")]) == 1
+
+
+def test_sanitize_sheet_name_truncates_and_strips_forbidden_chars():
+    name = sanitize_sheet_name("login", "Nghiệp vụ đăng nhập/đăng xuất: đầy đủ chi tiết", set())
+    assert len(name) <= 31
+    assert not any(c in name for c in ":\\/?*[]")
+
+
+def test_sanitize_sheet_name_dedupes_on_collision_after_truncation():
+    long_category = "a" * 40
+    existing: set[str] = set()
+    first = sanitize_sheet_name("login", long_category, existing)
+    existing.add(first)
+    second = sanitize_sheet_name("login", long_category, existing)
+    assert first != second
+    assert len(second) <= 31
+    assert second not in existing or second == second
