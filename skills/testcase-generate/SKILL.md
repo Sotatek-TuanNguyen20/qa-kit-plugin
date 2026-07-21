@@ -160,7 +160,7 @@ sinh ra từ YAML — deterministic, reproduce được.
     - action_vi: "Nhập password 8 ký tự"
       data: { password: "Abcd1234" }
     - action_vi: "Bấm nút đăng nhập"
-  expected_vi: "Đăng nhập thành công, chuyển sang màn hình chính"
+  expected_vi: "Password 8 ký tự không bị từ chối vì lý do độ dài (thoả điều kiện >= 8 theo DD-3.2.1 bảng 2)."
   evidence:
     section: "DD-3.2.1 bảng 2"
     quote: "Mật khẩu từ 8 đến 32 ký tự"
@@ -172,9 +172,17 @@ sinh ra từ YAML — deterministic, reproduce được.
   automatable: true
   verify:
     - method: ui_visible
-      target: "màn hình chính"
-      expect: true
+      target: "thông báo lỗi độ dài password (vd 'Mật khẩu quá ngắn')"
+      expect: false
 ```
+
+`expected_vi` chỉ khẳng định đúng phần evidence chứng minh (độ dài không bị từ chối) —
+KHÔNG khẳng định "đăng nhập thành công" hay "chuyển sang màn hình chính", vì rule độ
+dài không hề nói tới việc xác thực username/password có khớp tài khoản hay không (đó
+là 1 claim khác, cần evidence khác — xem "Phạm vi evidence" trong
+`skills/detail-fill/SKILL.md`). `verify[]` cũng đổi theo: kiểm tra thông báo lỗi độ
+dài KHÔNG xuất hiện — đây là điều evidence trực tiếp chứng minh được, thay vì kiểm
+tra 1 màn hình cụ thể mà evidence không hề nhắc tới.
 
 Case sinh đôi bắt buộc: `IT-LOGIN-004` với password 7 ký tự (min-1) — tương ứng
 1 entry riêng trong `details.yaml`. Nếu entry đó có `evidence_found: false` (vd

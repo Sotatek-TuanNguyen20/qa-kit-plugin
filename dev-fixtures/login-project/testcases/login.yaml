@@ -1,34 +1,13 @@
 # Sinh bởi testcase-generate (bước 4/6 của /qa-kit:design), đọc work/login/details.yaml
-# (output thật của detail-fill). Chỉ 5/19 entry có evidence_found: true được lắp thành
-# case dưới đây; 14 entry evidence_found: false bị bỏ qua (gap tương ứng đã có sẵn
-# trong work/login/gaps.yaml, không tạo case, không ghi gap trùng ở đây).
+# (output thật của detail-fill). Chỉ 4/19 entry có evidence_found: true được lắp thành
+# case dưới đây; 15 entry evidence_found: false bị bỏ qua (gap tương ứng đã có sẵn
+# trong work/login/gaps.yaml, không tạo case, không ghi gap trùng ở đây). Condition
+# "Đăng nhập thành công" (DATA-02) không có case: evidence chỉ chứng minh rule độ dài
+# password, không chứng minh được claim "đăng nhập thành công" — đã reclassify thành
+# GAP-020 ở detail-fill thay vì tạo case (xem "Phạm vi evidence" trong
+# skills/detail-fill/SKILL.md).
 
 - id: IT-LOGIN-001
-  trace: [DD-2, DD-2.1]
-  test_level: IT
-  category:
-    large: "Nghiệp vụ đăng nhập"
-    medium: "Đăng nhập bằng tài khoản/mật khẩu"
-    small: "Đăng nhập thành công"
-  viewpoint: DATA-02
-  precondition_vi:
-    - "Tài khoản đã được cấp, đang ở trạng thái hoạt động"
-  condition_vi: "Nhập đúng username và password hợp lệ (trong khoảng 8-32 ký tự), bấm đăng nhập — vào được hệ thống"
-  steps:
-    - action_vi: "Nhập username hợp lệ của tài khoản đã được cấp"
-      data: { username: "user01" }
-    - action_vi: "Nhập password hợp lệ (trong khoảng 8–32 ký tự)"
-      data: { password: "Abcd1234" }
-    - action_vi: "Bấm nút đăng nhập"
-  expected_vi: "Đăng nhập thành công, vào được hệ thống (password nằm trong khoảng hợp lệ 8–32 ký tự theo DD-2.1)."
-  evidence:
-    section: "DD-2.1"
-    quote: "Password từ 8 đến 32 ký tự. DDL: VARCHAR(32) NOT NULL CHECK (LENGTH(password) >= 8)"
-    source_type: db_definition
-  priority: P1
-  automatable: false
-
-- id: IT-LOGIN-002
   trace: [DD-2.1]
   test_level: IT
   category:
@@ -45,7 +24,7 @@
     - action_vi: "Nhập password đúng 8 ký tự (biên dưới min)"
       data: { password: "Abcd1234" }
     - action_vi: "Bấm nút đăng nhập"
-  expected_vi: "Đăng nhập thành công (password 8 ký tự thoả điều kiện >= 8 theo DD-2.1)."
+  expected_vi: "Password 8 ký tự không bị từ chối vì lý do độ dài (thoả điều kiện >= 8 theo DD-2.1)."
   evidence:
     section: "DD-2.1"
     quote: "Password từ 8 đến 32 ký tự. DDL: VARCHAR(32) NOT NULL CHECK (LENGTH(password) >= 8)"
@@ -54,7 +33,7 @@
   priority: P1
   automatable: false
 
-- id: IT-LOGIN-003
+- id: IT-LOGIN-002
   trace: [DD-2.1]
   test_level: IT
   category:
@@ -71,7 +50,7 @@
     - action_vi: "Nhập password đúng 32 ký tự (biên trên max)"
       data: { password: "Abcd1234Abcd1234Abcd1234Abcd1234" }
     - action_vi: "Bấm nút đăng nhập"
-  expected_vi: "Đăng nhập thành công (password 32 ký tự thoả điều kiện <= 32 theo DD-2.1)."
+  expected_vi: "Password 32 ký tự không bị từ chối vì lý do độ dài (thoả điều kiện <= 32 theo DD-2.1)."
   evidence:
     section: "DD-2.1"
     quote: "Password từ 8 đến 32 ký tự. DDL: VARCHAR(32) NOT NULL CHECK (LENGTH(password) >= 8)"
@@ -80,7 +59,7 @@
   priority: P1
   automatable: false
 
-- id: IT-LOGIN-004
+- id: IT-LOGIN-003
   trace: [DD-5]
   test_level: IT
   category:
@@ -101,7 +80,7 @@
   priority: P1
   automatable: false
 
-- id: IT-LOGIN-005
+- id: IT-LOGIN-004
   trace: [DD-5]
   test_level: IT
   category:

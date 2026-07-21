@@ -11,12 +11,9 @@
   priority: P1
   condition_vi: "Nhập đúng username và password hợp lệ (trong khoảng 8-32 ký tự), bấm đăng nhập — vào được hệ thống"
   precondition_vi: ["Tài khoản đã được cấp, đang ở trạng thái hoạt động"]
-  evidence_found: true
-  evidence:
-    section: "DD-2.1"
-    quote: "Password từ 8 đến 32 ký tự. DDL: VARCHAR(32) NOT NULL CHECK (LENGTH(password) >= 8)"
-    source_type: db_definition
-  gap_id: null
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-020"
 
 - large: "Nghiệp vụ đăng nhập"
   medium: "Đăng nhập bằng tài khoản/mật khẩu"

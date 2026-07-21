@@ -68,6 +68,26 @@ db_definition > screen_item > message_list > dd > spec
 Mâu thuẫn giữa 2 nguồn (vd DDL nói khác văn xuôi) → KHÔNG tự chọn bên nào, đó là gap
 (`gap_type: contradiction`).
 
+### Phạm vi evidence: phải chứng minh ĐÚNG claim đang test, không phải 1 fact liên quan
+
+Evidence tìm được phải trực tiếp chứng minh đúng nội dung `condition_vi` đang test —
+không phải một fact liền kề, nghe có vẻ liên quan nhưng thực ra chỉ chứng minh 1
+claim hẹp hơn. Ví dụ: rule DDL về ĐỘ DÀI password (`VARCHAR(32) NOT NULL
+CHECK (LENGTH(password) >= 8)`) chỉ chứng minh "password đúng định dạng/độ dài này
+được chấp nhận, không bị từ chối vì lý do độ dài" — nó KHÔNG chứng minh "đăng nhập
+thành công" (kết quả đó còn phụ thuộc thêm: username đúng, password khớp đúng tài
+khoản, tài khoản đang hoạt động... — những claim mà rule độ dài không hề nói tới).
+
+Nếu claim của condition rộng hơn phạm vi evidence thực sự chứng minh:
+- Claim CỐT LÕI của condition chính là phần vượt quá evidence (vd condition test
+  "đăng nhập thành công" mà evidence chỉ có rule độ dài) → coi như KHÔNG có evidence,
+  xử lý theo bước 5 dưới đây (gap), KHÔNG ghi `evidence_found: true`.
+- Claim cốt lõi của condition là phần ĐƯỢC evidence chứng minh (vd condition test
+  boundary độ dài — evidence chứng minh đúng phần này), phần diễn giải đi kèm rộng
+  hơn 1 chút không phải cốt lõi → vẫn `evidence_found: true`, nhưng `testcase-generate`
+  khi viết `expected_vi` chỉ được khẳng định đúng phần evidence chứng minh, không
+  được mở rộng sang kết quả nghiệp vụ rộng hơn.
+
 ### Boundary: BẮT BUỘC `evidence.operator` khi `viewpoint: DATA-01`
 
 Bản dịch VI không phân biệt được `>=` và `>` ("trên 8 ký tự" = cả hai). Cấm suy diễn
@@ -169,5 +189,7 @@ Entry thiếu evidence:
       trùng lặp với entry `open` hoặc `answered` đã có sẵn?
 - [ ] Mâu thuẫn nguồn (DDL vs văn xuôi) có bị tự chọn 1 bên không, hay đã ghi thành
       gap `contradiction`?
+- [ ] Mọi entry `evidence_found: true` — evidence có thực sự chứng minh ĐÚNG claim cốt
+      lõi của condition, không phải 1 fact liền kề chỉ nghe có vẻ liên quan chưa?
 - [ ] Field kế thừa từ `conditions.yaml` có bị sửa nhầm không (chỉ được bổ sung,
       không sửa)?

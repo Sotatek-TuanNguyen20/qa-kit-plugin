@@ -220,3 +220,21 @@
   question_vi: "Bấm Back trình duyệt sau khi đăng xuất có truy cập lại được trang yêu cầu đăng nhập qua cache không?"
   status: open
   answer_vi: ""
+
+# GAP-020: raised sau khi review phát hiện DD-2.1 chỉ nêu rule ĐỘ DÀI password, không
+# hề xác nhận "username+password đúng -> đăng nhập thành công" (claim cốt lõi của
+# condition "Đăng nhập thành công", viewpoint DATA-02) — 2 claim khác nhau, evidence
+# độ dài không chứng minh được claim thành công. Áp dụng rule "Phạm vi evidence" mới
+# thêm vào skills/detail-fill/SKILL.md: reclassify condition này evidence_found: false.
+- id: GAP-020
+  raised_at: "2026-07-21T11:00:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-2, DD-2.1]
+  condition_ref: "Đăng nhập thành công"
+  gap_type: missing_evidence
+  severity: P1
+  description_vi: "DD-2.1 chỉ nêu rule độ dài password (VARCHAR(32) NOT NULL CHECK LENGTH>=8), không có câu nào trong docs/login.md xác nhận rằng nhập đúng username+password hợp lệ thì đăng nhập thành công — DD-2 (heading cha) không có nội dung, chỉ là container rỗng."
+  question_vi: "Tài liệu có xác nhận: khi username và password nhập đúng (khớp tài khoản đã cấp), hệ thống cho đăng nhập thành công không? Hiện chỉ có rule độ dài password, chưa có câu nào mô tả cơ chế xác thực thành công cơ bản."
+  status: open
+  answer_vi: ""
