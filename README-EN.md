@@ -76,7 +76,7 @@ Merge-without-edit rate of test cases, per module. <60% → feed more into `view
 | 2 Monitoring          | `/qa-kit:report` `/qa-kit:retest` | ✅  |
 | 7 Completion          | `/qa-kit:complete`            | ⬜  |
 
-Skills: `testcase-generate` ✅ `test-triage` ✅ `gap-report` ✅ `coverage-check` ✅ | `scenario-map` `viewpoint-apply` `detail-fill` ⬜
+Skills: `testcase-generate` ✅ `test-triage` ✅ `gap-report` ✅ `coverage-check` ✅ | `scenario-map` ✅ `viewpoint-apply` ✅ `detail-fill` ✅
 
 Tools: `export_excel.py` ✅ | `harness.py` `validate.py` ⬜
 

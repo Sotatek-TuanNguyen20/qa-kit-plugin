@@ -655,3 +655,27 @@ trace/test_level/viewpoint/priority/condition_vi/precondition_vi`) được
 `schemas/testcase.schema.yaml` đã định nghĩa (`section/quote/source_type/operator`)
 — Task 4 copy thẳng object này vào `testcases/login.yaml`, không cần transform field
 name nào.
+
+---
+
+## Post-plan amendments (added during review, not in original plan/spec)
+
+This plan and the frozen spec (`docs/superpowers/specs/2026-07-20-design-chain-skills.md`)
+are kept as a record of original intent, not rewritten to match the final shipped skill.
+The shipped `skills/detail-fill/SKILL.md` picked up the following during later review fix
+cycles — noted here for a future reader, not reflected above:
+
+- **Bước 0 gate narrowing clarification** — the "Phân biệt với gap per-condition"
+  paragraph, distinguishing "`docs/` has zero signal the concept applies" (gate fires)
+  from "`docs/` has partial/scattered coverage" (gate does not fire) — added in `46102ba`
+  (Add detail-fill skill, verified against login-project fixture).
+- **Dedup rule** — check `work/$1/gaps.yaml` for an existing open or answered entry
+  asking the same question before appending a new gap — added in `d77a60b` (Dedupe gaps
+  against existing entries in detail-fill).
+- **Phạm vi evidence rule** — evidence must support the condition's actual core claim,
+  not an adjacent narrower fact — added in `e8e20ec` (Fix evidence-adequacy gap: DATA-02
+  happy path overclaimed login success).
+- **DATA-02 evidence-adequacy reclassification** (`GAP-020`) — "Đăng nhập thành công" was
+  wrongly marked `evidence_found: true` off password-length DDL alone, which proves
+  format acceptance, not successful authentication — reclassified to
+  `evidence_found: false` in that same commit, `e8e20ec`.

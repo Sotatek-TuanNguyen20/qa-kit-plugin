@@ -57,16 +57,15 @@ full mapping table):
 intermediate artifact so a human can review the diff:
 
 ```
-1. scenario-map     -> work/$1/scenarios.yaml   [not implemented yet — no skills/scenario-map/]
-2. viewpoint-apply  -> work/$1/conditions.yaml  [not implemented yet]
-3. detail-fill      -> work/$1/details.yaml     [not implemented yet]
+1. scenario-map     -> work/$1/scenarios.yaml   skills/scenario-map/SKILL.md
+2. viewpoint-apply  -> work/$1/conditions.yaml  skills/viewpoint-apply/SKILL.md
+3. detail-fill      -> work/$1/details.yaml     skills/detail-fill/SKILL.md
 4. testcase-generate-> testcases/$1.yaml        skills/testcase-generate/SKILL.md
 5. gap-report       -> reports/$1-gap.md        skills/gap-report/SKILL.md
 6. coverage-check   -> reports/$1-coverage.md   skills/coverage-check/SKILL.md
 ```
 
-Steps 1–3 are referenced by `commands/design.md` but their `SKILL.md` files don't exist yet —
-check `skills/` before assuming a step is implemented. In `tools/`, `export_excel.py` is now
+All 6 steps now have a corresponding `SKILL.md` under `skills/`. In `tools/`, `export_excel.py` is now
 implemented (with tests in `tests/test_export_excel.py`); `harness.py` and `validate.py` are
 still empty, so `/qa-kit:run`'s automation branch is unimplemented. Check the status table in
 `README.md` before assuming a command/skill/tool exists.

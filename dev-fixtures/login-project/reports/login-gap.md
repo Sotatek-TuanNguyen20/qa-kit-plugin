@@ -1,3 +1,12 @@
+<!--
+Fixture note: this run exercises all 6 steps of the /qa-kit:design chain purely to verify
+each skill's own output shape in isolation — it is not a simulation of a realistic
+end-to-end orchestration run. With a 79% no-evidence rate (15/19 conditions gapped, see
+work/login/gaps.yaml), a real /qa-kit:design run would have hit the machine gate in
+commands/design.md (>20% conditions with no evidence) and stopped after step 3
+(detail-fill), emitting this gap report without ever reaching testcase-generate.
+-->
+
 # Gap Report — login
 
 | Module | login |
