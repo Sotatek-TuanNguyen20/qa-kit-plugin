@@ -1,0 +1,268 @@
+# Sinh bởi detail-fill (bước 3/6 của /qa-kit:design), đọc work/login/conditions.yaml
+# (output thật của viewpoint-apply) + docs/login.md. Mọi field large/medium/small/trace/
+# test_level/viewpoint/priority/condition_vi/precondition_vi giữ nguyên từ conditions.yaml.
+
+- large: "Nghiệp vụ đăng nhập"
+  medium: "Đăng nhập bằng tài khoản/mật khẩu"
+  small: "Đăng nhập thành công"
+  trace: [DD-2, DD-2.1]
+  test_level: IT
+  viewpoint: DATA-02
+  priority: P1
+  condition_vi: "Nhập đúng username và password hợp lệ (trong khoảng 8-32 ký tự), bấm đăng nhập — vào được hệ thống"
+  precondition_vi: ["Tài khoản đã được cấp, đang ở trạng thái hoạt động"]
+  evidence_found: true
+  evidence:
+    section: "DD-2.1"
+    quote: "Password từ 8 đến 32 ký tự. DDL: VARCHAR(32) NOT NULL CHECK (LENGTH(password) >= 8)"
+    source_type: db_definition
+  gap_id: null
+
+- large: "Nghiệp vụ đăng nhập"
+  medium: "Đăng nhập bằng tài khoản/mật khẩu"
+  small: "Password đúng biên dưới"
+  trace: [DD-2.1]
+  test_level: IT
+  viewpoint: DATA-01
+  priority: P1
+  condition_vi: "Password đúng 8 ký tự (biên dưới min)"
+  precondition_vi: ["Tài khoản đã được cấp, đang ở trạng thái hoạt động"]
+  evidence_found: true
+  evidence:
+    section: "DD-2.1"
+    quote: "Password từ 8 đến 32 ký tự. DDL: VARCHAR(32) NOT NULL CHECK (LENGTH(password) >= 8)"
+    source_type: db_definition
+    operator: { min: 8, min_op: ">=", max: 32, max_op: "<=" }
+  gap_id: null
+
+- large: "Nghiệp vụ đăng nhập"
+  medium: "Đăng nhập bằng tài khoản/mật khẩu"
+  small: "Password dưới biên dưới"
+  trace: [DD-2.1]
+  test_level: IT
+  viewpoint: DATA-01
+  priority: P1
+  condition_vi: "Password 7 ký tự (min - 1) — phải bị từ chối"
+  precondition_vi: ["Tài khoản đã được cấp, đang ở trạng thái hoạt động"]
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-005"
+
+- large: "Nghiệp vụ đăng nhập"
+  medium: "Đăng nhập bằng tài khoản/mật khẩu"
+  small: "Password đúng biên trên"
+  trace: [DD-2.1]
+  test_level: IT
+  viewpoint: DATA-01
+  priority: P1
+  condition_vi: "Password đúng 32 ký tự (biên trên max)"
+  precondition_vi: ["Tài khoản đã được cấp, đang ở trạng thái hoạt động"]
+  evidence_found: true
+  evidence:
+    section: "DD-2.1"
+    quote: "Password từ 8 đến 32 ký tự. DDL: VARCHAR(32) NOT NULL CHECK (LENGTH(password) >= 8)"
+    source_type: db_definition
+    operator: { min: 8, min_op: ">=", max: 32, max_op: "<=" }
+  gap_id: null
+
+- large: "Nghiệp vụ đăng nhập"
+  medium: "Đăng nhập bằng tài khoản/mật khẩu"
+  small: "Password vượt biên trên"
+  trace: [DD-2.1]
+  test_level: IT
+  viewpoint: DATA-01
+  priority: P2
+  condition_vi: "Password 33 ký tự (max + 1) — phải bị từ chối. Rủi ro thấp hơn phía biên dưới (không phải rủi ro bảo mật password yếu) nên xếp P2, không P1."
+  precondition_vi: ["Tài khoản đã được cấp, đang ở trạng thái hoạt động"]
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-006"
+
+- large: "Nghiệp vụ đăng nhập"
+  medium: "Đăng nhập bằng tài khoản/mật khẩu"
+  small: "Sai password"
+  trace: [DD-2]
+  test_level: IT
+  viewpoint: USER-01
+  priority: P1
+  condition_vi: "Nhập đúng username, sai password — đăng nhập phải bị từ chối, không vào được hệ thống"
+  precondition_vi: ["Tài khoản đã được cấp, đang ở trạng thái hoạt động"]
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-007"
+
+- large: "Nghiệp vụ đăng nhập"
+  medium: "Đăng nhập bằng tài khoản/mật khẩu"
+  small: "Password rỗng"
+  trace: [DD-2.1]
+  test_level: IT
+  viewpoint: DATA-03
+  priority: P2
+  condition_vi: "Để trống ô password (rỗng/NULL) rồi bấm đăng nhập — vi phạm ràng buộc NOT NULL đã nêu trong DD-2.1"
+  precondition_vi: ["Tài khoản đã được cấp, đang ở trạng thái hoạt động"]
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-008"
+
+- large: "Nghiệp vụ đăng nhập"
+  medium: "Đăng nhập bằng tài khoản/mật khẩu"
+  small: "Password chứa ký tự đặc biệt/unicode"
+  trace: [DD-2]
+  test_level: IT
+  viewpoint: DATA-04
+  priority: P3
+  condition_vi: "Password chứa ký tự đặc biệt (!@#$%), khoảng trắng giữa từ, hoặc ký tự có dấu/emoji — doc chưa quy định charset cho password"
+  precondition_vi: ["Tài khoản đã được cấp, đang ở trạng thái hoạt động"]
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-009"
+
+- large: "Nghiệp vụ đăng nhập"
+  medium: "Đăng nhập bằng tài khoản/mật khẩu"
+  small: "Đăng nhập sai liên tiếp nhiều lần"
+  trace: [DD-2]
+  test_level: IT
+  viewpoint: BIZ-06
+  priority: P3
+  condition_vi: "Nhập sai password liên tiếp nhiều lần cho cùng 1 tài khoản — có giới hạn số lần/khoá tạm tài khoản không (doc chưa đề cập)"
+  precondition_vi:
+    - "Tài khoản đã được cấp, đang ở trạng thái hoạt động"
+    - "Chưa từng bị khoá do đăng nhập sai trước đó"
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-010"
+
+- large: "Nghiệp vụ đăng nhập"
+  medium: "Đăng nhập qua SSO nội bộ công ty"
+  small: "Đăng nhập SSO thành công"
+  trace: [DD-4]
+  test_level: IT
+  viewpoint: BIZ-01
+  priority: P1
+  condition_vi: "Chọn đăng nhập SSO, xác thực thành công qua hệ thống SSO nội bộ, redirect đúng về ứng dụng"
+  precondition_vi: ["Tài khoản đã được liên kết với SSO nội bộ công ty"]
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-011"
+
+- large: "Nghiệp vụ đăng nhập"
+  medium: "Đăng nhập qua SSO nội bộ công ty"
+  small: "SSO từ chối xác thực"
+  trace: [DD-4]
+  test_level: IT
+  viewpoint: IMPACT-03
+  priority: P2
+  condition_vi: "Hệ thống SSO nội bộ (IdP — hệ thống liên kết ngoài) trả về lỗi/từ chối xác thực — ứng dụng phải xử lý và hiển thị thông báo phù hợp"
+  precondition_vi: ["Tài khoản đã được liên kết với SSO nội bộ công ty"]
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-012"
+
+- large: "Nghiệp vụ đăng nhập"
+  medium: "Đăng nhập qua SSO nội bộ công ty"
+  small: "Gián đoạn giữa luồng redirect SSO"
+  trace: [DD-4]
+  test_level: IT
+  viewpoint: USER-02
+  priority: P3
+  condition_vi: "Đóng tab hoặc bấm back trình duyệt giữa lúc đang redirect sang hệ thống SSO nội bộ"
+  precondition_vi: ["Tài khoản đã được liên kết với SSO nội bộ công ty"]
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-013"
+
+- large: "Nghiệp vụ quên mật khẩu"
+  medium: "Yêu cầu đặt lại mật khẩu qua email"
+  small: "Luồng quên mật khẩu thành công"
+  trace: [DD-3]
+  test_level: IT
+  viewpoint: BIZ-01
+  priority: P1
+  condition_vi: "Bấm 'Quên mật khẩu' → nhận email chứa link reset → bấm link → đặt mật khẩu mới thành công"
+  precondition_vi: []
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-014"
+
+- large: "Nghiệp vụ quên mật khẩu"
+  medium: "Yêu cầu đặt lại mật khẩu qua email"
+  small: "Link reset hết hạn"
+  trace: [DD-3]
+  test_level: IT
+  viewpoint: TIMING-05
+  priority: P3
+  condition_vi: "Bấm vào link reset mật khẩu sau khi link đã hết hạn (doc chưa nói rõ thời hạn hiệu lực của link)"
+  precondition_vi: ["Đã nhận email reset, link đã quá thời hạn hiệu lực"]
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-015"
+
+- large: "Nghiệp vụ quên mật khẩu"
+  medium: "Yêu cầu đặt lại mật khẩu qua email"
+  small: "Dùng lại link reset đã dùng"
+  trace: [DD-3]
+  test_level: IT
+  viewpoint: DATA-06
+  priority: P3
+  condition_vi: "Dùng lại (lần 2) link reset mật khẩu đã được dùng để đặt lại mật khẩu trước đó"
+  precondition_vi: ["Đã yêu cầu đặt lại mật khẩu 1 lần trước đó và link đã được dùng"]
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-016"
+
+- large: "Nghiệp vụ quên mật khẩu"
+  medium: "Yêu cầu đặt lại mật khẩu qua email"
+  small: "Yêu cầu reset liên tiếp nhiều lần"
+  trace: [DD-3]
+  test_level: IT
+  viewpoint: USER-04
+  priority: P3
+  condition_vi: "Bấm 'Quên mật khẩu' nhiều lần liên tiếp cho cùng 1 tài khoản/email — hệ thống gửi nhiều email trùng hay chặn spam?"
+  precondition_vi: []
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-017"
+
+- large: "Nghiệp vụ đăng xuất"
+  medium: "Đăng xuất khỏi hệ thống qua thanh điều hướng"
+  small: "Đăng xuất thành công"
+  trace: [DD-5]
+  test_level: IT
+  viewpoint: TIMING-02
+  priority: P1
+  condition_vi: "Bấm 'Đăng xuất' → phiên chuyển sang trạng thái đã đăng xuất, redirect về màn hình đăng nhập, truy cập lại trang cần đăng nhập bị chặn"
+  precondition_vi: ["Đang trong phiên đăng nhập hợp lệ"]
+  evidence_found: true
+  evidence:
+    section: "DD-5"
+    quote: "Người dùng bấm nút \"Đăng xuất\" trên thanh điều hướng để kết thúc phiên đăng nhập."
+    source_type: dd
+  gap_id: null
+
+- large: "Nghiệp vụ đăng xuất"
+  medium: "Đăng xuất khỏi hệ thống qua thanh điều hướng"
+  small: "Phạm vi xoá session khi đăng xuất"
+  trace: [DD-5]
+  test_level: IT
+  viewpoint: DATA-06
+  priority: P1
+  condition_vi: "Đăng xuất ở 1 thiết bị, kiểm tra phiên đăng nhập ở thiết bị/trình duyệt khác — bị xoá toàn bộ hay chỉ thiết bị hiện tại (DD-5 tự nêu đây là điểm chưa rõ)"
+  precondition_vi:
+    - "Đang trong phiên đăng nhập hợp lệ"
+    - "Đã đăng nhập đồng thời trên ≥2 thiết bị/trình duyệt khác nhau"
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-018"
+
+- large: "Nghiệp vụ đăng xuất"
+  medium: "Đăng xuất khỏi hệ thống qua thanh điều hướng"
+  small: "Back trình duyệt sau khi đăng xuất"
+  trace: [DD-5]
+  test_level: IT
+  viewpoint: USER-03
+  priority: P3
+  condition_vi: "Bấm nút Back trình duyệt sau khi đăng xuất, kiểm tra có truy cập lại được trang yêu cầu đăng nhập qua cache không"
+  precondition_vi: ["Đang trong phiên đăng nhập hợp lệ"]
+  evidence_found: false
+  evidence: null
+  gap_id: "GAP-019"

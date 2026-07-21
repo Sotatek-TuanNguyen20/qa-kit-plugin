@@ -56,3 +56,189 @@
   question_vi: "Đăng xuất có xoá session ở tất cả thiết bị hay chỉ thiết bị hiện tại đang dùng?"
   status: answered
   answer_vi: "Chỉ xoá session ở thiết bị hiện tại; các thiết bị khác vẫn giữ đăng nhập cho tới khi token hết hạn."
+
+# GAP-005..019: raised bởi detail-fill (bước 3), chạy trên conditions.yaml thật (19
+# condition của Task 2) đối chiếu docs/login.md. Không đối chiếu ngược lại GAP-001..004
+# ở trên (fixture cũ, seed riêng cho gap-report) — detail-fill tự tìm evidence độc lập
+# theo đúng quy trình của nó, nên GAP-011/GAP-018 trùng chủ đề với GAP-001/GAP-004 là
+# có chủ đích (xem task-3-report.md phần "Concerns").
+- id: GAP-005
+  raised_at: "2026-07-21T09:20:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-2.1]
+  condition_ref: "Password dưới biên dưới"
+  gap_type: missing_message_list
+  severity: P1
+  description_vi: "Không tìm được message lỗi cho case password 7 ký tự (dưới biên min 8) — message list chưa có trong docs/."
+  question_vi: "Message lỗi khi password dưới 8 ký tự (biên dưới) là gì? Cần message ID/nội dung cụ thể."
+  status: open
+  answer_vi: ""
+- id: GAP-006
+  raised_at: "2026-07-21T09:25:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-2.1]
+  condition_ref: "Password vượt biên trên"
+  gap_type: missing_message_list
+  severity: P1
+  description_vi: "Không tìm được message lỗi cho case password 33 ký tự (vượt biên max 32) — message list chưa có trong docs/."
+  question_vi: "Message lỗi khi password vượt quá 32 ký tự là gì? Cần message ID/nội dung cụ thể."
+  status: open
+  answer_vi: ""
+- id: GAP-007
+  raised_at: "2026-07-21T09:30:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-2]
+  condition_ref: "Sai password"
+  gap_type: missing_evidence
+  severity: P1
+  description_vi: "DD-2 không nêu rule/message cho trường hợp nhập sai password (chỉ có DD-2.1 nói về độ dài, không nói về xác thực đúng/sai)."
+  question_vi: "Khi nhập sai password, hệ thống từ chối như thế nào và hiển thị message gì?"
+  status: open
+  answer_vi: ""
+- id: GAP-008
+  raised_at: "2026-07-21T09:35:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-2.1]
+  condition_ref: "Password rỗng"
+  gap_type: missing_message_list
+  severity: P1
+  description_vi: "DD-2.1 có ràng buộc NOT NULL nhưng không nêu message lỗi khi để trống password — message list chưa có trong docs/."
+  question_vi: "Message lỗi khi để trống ô password (vi phạm NOT NULL) là gì?"
+  status: open
+  answer_vi: ""
+- id: GAP-009
+  raised_at: "2026-07-21T09:40:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-2]
+  condition_ref: "Password chứa ký tự đặc biệt/unicode"
+  gap_type: missing_evidence
+  severity: P3
+  description_vi: "Doc chưa quy định charset cho password (ký tự đặc biệt, unicode, khoảng trắng) — không có rule để xác định expected."
+  question_vi: "Password có được phép chứa ký tự đặc biệt/unicode/khoảng trắng không? Cần quy định charset cụ thể."
+  status: open
+  answer_vi: ""
+- id: GAP-010
+  raised_at: "2026-07-21T09:45:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-2]
+  condition_ref: "Đăng nhập sai liên tiếp nhiều lần"
+  gap_type: missing_evidence
+  severity: P3
+  description_vi: "Doc chưa đề cập chính sách giới hạn số lần đăng nhập sai/khoá tạm tài khoản."
+  question_vi: "Có giới hạn số lần đăng nhập sai liên tiếp không? Có khoá tạm tài khoản không? Bao lâu?"
+  status: open
+  answer_vi: ""
+- id: GAP-011
+  raised_at: "2026-07-21T09:50:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-4]
+  condition_ref: "Đăng nhập SSO thành công"
+  gap_type: missing_screen_item
+  severity: P1
+  description_vi: "DD-4 tự nêu chưa mô tả field/màn hình cụ thể cho luồng SSO — không đủ căn cứ cho hành vi redirect/màn hình sau khi xác thực SSO thành công."
+  question_vi: "Màn hình/luồng redirect sau khi xác thực SSO thành công cụ thể ra sao? Cần screen item definition cho DD-4."
+  status: open
+  answer_vi: ""
+- id: GAP-012
+  raised_at: "2026-07-21T09:55:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-4]
+  condition_ref: "SSO từ chối xác thực"
+  gap_type: missing_message_list
+  severity: P1
+  description_vi: "DD-4 chỉ nói ứng dụng phải xử lý khi SSO từ chối xác thực nhưng không nêu message/nội dung thông báo cụ thể — message list chưa có trong docs/."
+  question_vi: "Khi SSO nội bộ từ chối xác thực, ứng dụng hiển thị message gì cho người dùng?"
+  status: open
+  answer_vi: ""
+- id: GAP-013
+  raised_at: "2026-07-21T10:00:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-4]
+  condition_ref: "Gián đoạn giữa luồng redirect SSO"
+  gap_type: missing_evidence
+  severity: P3
+  description_vi: "DD-4 không đề cập hành vi khi người dùng đóng tab/back giữa lúc redirect sang SSO nội bộ."
+  question_vi: "Đóng tab hoặc back trình duyệt giữa lúc redirect SSO thì hệ thống xử lý thế nào?"
+  status: open
+  answer_vi: ""
+- id: GAP-014
+  raised_at: "2026-07-21T10:05:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-3]
+  condition_ref: "Luồng quên mật khẩu thành công"
+  gap_type: missing_evidence
+  severity: P1
+  description_vi: "DD-3 tự nêu 'chưa có thêm chi tiết' sau bước gửi email reset — không có căn cứ cho bước bấm link/đặt mật khẩu mới thành công."
+  question_vi: "Sau khi bấm link reset, luồng đặt mật khẩu mới cụ thể ra sao (field, rule, message thành công)?"
+  status: open
+  answer_vi: ""
+- id: GAP-015
+  raised_at: "2026-07-21T10:10:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-3]
+  condition_ref: "Link reset hết hạn"
+  gap_type: missing_evidence
+  severity: P3
+  description_vi: "Doc chưa nói rõ thời hạn hiệu lực của link reset mật khẩu."
+  question_vi: "Link reset mật khẩu có hiệu lực trong bao lâu? Sau khi hết hạn, hệ thống xử lý/hiển thị message gì?"
+  status: open
+  answer_vi: ""
+- id: GAP-016
+  raised_at: "2026-07-21T10:15:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-3]
+  condition_ref: "Dùng lại link reset đã dùng"
+  gap_type: missing_evidence
+  severity: P3
+  description_vi: "Doc chưa đề cập hành vi khi dùng lại link reset đã được sử dụng trước đó (single-use hay không)."
+  question_vi: "Link reset mật khẩu có dùng lại được sau khi đã dùng 1 lần không? Nếu không, hệ thống báo gì?"
+  status: open
+  answer_vi: ""
+- id: GAP-017
+  raised_at: "2026-07-21T10:20:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-3]
+  condition_ref: "Yêu cầu reset liên tiếp nhiều lần"
+  gap_type: missing_evidence
+  severity: P3
+  description_vi: "Doc chưa đề cập hành vi khi yêu cầu quên mật khẩu nhiều lần liên tiếp (gửi trùng email hay chặn spam)."
+  question_vi: "Yêu cầu 'Quên mật khẩu' liên tiếp nhiều lần thì hệ thống gửi nhiều email trùng hay chặn/giới hạn?"
+  status: open
+  answer_vi: ""
+- id: GAP-018
+  raised_at: "2026-07-21T10:25:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-5]
+  condition_ref: "Phạm vi xoá session khi đăng xuất"
+  gap_type: ambiguous
+  severity: P1
+  description_vi: "DD-5 tự nêu chưa rõ đăng xuất có xoá session ở tất cả thiết bị hay chỉ thiết bị hiện tại."
+  question_vi: "Đăng xuất có xoá session ở tất cả thiết bị hay chỉ thiết bị hiện tại đang dùng?"
+  status: open
+  answer_vi: ""
+- id: GAP-019
+  raised_at: "2026-07-21T10:30:00+07:00"
+  raised_by: detail-fill
+  step: 3
+  trace: [DD-5]
+  condition_ref: "Back trình duyệt sau khi đăng xuất"
+  gap_type: missing_evidence
+  severity: P3
+  description_vi: "DD-5 không đề cập hành vi cache của trình duyệt khi bấm Back sau khi đăng xuất."
+  question_vi: "Bấm Back trình duyệt sau khi đăng xuất có truy cập lại được trang yêu cầu đăng nhập qua cache không?"
+  status: open
+  answer_vi: ""
