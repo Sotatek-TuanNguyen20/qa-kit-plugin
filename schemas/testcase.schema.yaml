@@ -99,8 +99,11 @@ properties:
           xem context/standards-mapping.md. IMMUTABLE, cấm sửa ở /qa-kit:eval.
       source_type:
         type: string
-        enum: [spec, dd, db_definition, message_list, screen_item]
-        description: "db_definition = từ DDL/ERD. Nguồn tin cậy cao cho boundary."
+        enum: [spec, dd, db_definition, message_list, screen_item, config_definition, fixed_format, log_format]
+        description: >
+          db_definition = từ DDL/ERD (web/DB). config_definition/fixed_format/log_format =
+          tương đương cho hệ CLI/backend không DB — xem CLAUDE.md dự án, mục "System
+          Profile", để biết cột nào (web hay CLI/backend) áp dụng.
       operator:
         type: object
         description: >
@@ -140,7 +143,7 @@ properties:
       properties:
         method:
           type: string
-          enum: [ui_text, ui_visible, http_status, http_body, db_query]
+          enum: [ui_text, ui_visible, http_status, http_body, db_query, cli_exit_code, cli_output, file_exists, file_content, log_grep]
         target: { type: string }
         expect: {}
         db_readonly:
