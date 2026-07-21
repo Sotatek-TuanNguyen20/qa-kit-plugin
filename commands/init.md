@@ -73,7 +73,7 @@ với người đọc sau này.
 
 ### Bước 3: Ghi mục "System Profile" vào `CLAUDE.md`
 
-Chèn block sau vào `CLAUDE.md` của project, ngay sau mục "## Đường dẫn", trước mục
+Chèn block sau vào `CLAUDE.md` của dự án, ngay sau mục "## Đường dẫn", trước mục
 "## Ngôn ngữ":
 
 ```markdown
@@ -154,7 +154,7 @@ forbidden_patterns: [prod, production, live, honban, 本番]
 | | Ở đâu | Ai sửa | Vòng đời |
 |---|---|---|---|
 | `${CLAUDE_PLUGIN_ROOT}/context/viewpoints.md` | **Plugin** | QA lead, qua PR | Version hóa, dùng chung mọi dự án |
-| `./context/viewpoints-local.md` | **Project** | Tester | 観点 riêng dự án này |
+| `./context/viewpoints-local.md` | **Dự án** | Tester | 観点 riêng dự án này |
 
 Đọc **cả hai**, local ghi đè chung khi trùng ID.
 
@@ -197,4 +197,4 @@ Rồi DỪNG. Không tự chạy `/qa-kit:design`.
 - Tự điền `config/env.yaml` bằng giá trị đoán (IP/host/service THẬT phải hỏi tester,
   không tự bịa — chỉ khung field theo loại hệ thống là được viết sẵn)
 - Tự `git init`
-- Bỏ qua 5 câu hỏi vì "tên project có vẻ đoán được loại hệ thống" — luôn hỏi đủ 5 câu
+- Bỏ qua 5 câu hỏi vì "tên dự án có vẻ đoán được loại hệ thống" — luôn hỏi đủ 5 câu
