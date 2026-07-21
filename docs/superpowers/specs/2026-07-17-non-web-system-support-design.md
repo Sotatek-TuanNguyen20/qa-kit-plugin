@@ -2,6 +2,12 @@
 
 Ngày: 2026-07-17
 
+> **SUPERSEDED** bởi `docs/superpowers/specs/2026-07-21-system-profile-and-ready-design.md`
+> (2026-07-21) — nội dung System Profile/enum/routing dưới đây vẫn đúng tinh thần và được
+> spec mới giữ nguyên, chỉ bổ sung thêm 2 câu hỏi (seed data, môi trường/cô lập) + command
+> `/qa-kit:ready` mà bản này chưa có. Giữ file này làm record lịch sử, không implement từ
+> đây nữa — implement theo spec mới.
+
 ## Bối cảnh
 
 `qa-kit-plugin` hiện ngầm định hệ thống dưới test luôn là web app + database ở nhiều chỗ:
