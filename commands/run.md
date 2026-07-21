@@ -23,9 +23,9 @@ Không có scope -> DỪNG. Cấm tự quyết định round 2 chạy gì.
 
 - `testcases/$1.yaml` đã qua human review (có commit, không phải working dir bẩn)
 - Env target là **test env**. Đọc `config/env.yaml`.
-  Quét TẤT CẢ giá trị string trong `environments.<target>` (không chỉ `base_url`/`db.host`
+  Quét TẤT CẢ giá trị chuỗi trong `environments.<target>` (không chỉ `base_url`/`db.host`
   — hệ CLI/daemon dùng field khác như `ssh_host`/`spool_root`/`external_mock_url`, xem
-  `CLAUDE.md`'s System Profile để biết field nào project này dùng) đối chiếu
+  mục System Profile trong `CLAUDE.md` để biết field nào dự án này dùng) đối chiếu
   `forbidden_patterns`. Khớp bất kỳ pattern nào -> **DỪNG NGAY**, không hỏi lại.
 
 ## Nhánh AUTO (`automatable: true`)
