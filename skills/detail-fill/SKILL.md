@@ -56,14 +56,21 @@ loại tài liệu này CÓ áp dụng, gate KHÔNG fire. Case/màn hình/messag
 
 ## Bảng ưu tiên nguồn evidence
 
-Tái dùng đúng bảng gốc (web-app) đã có trong `context/standards-mapping.md` +
-`skills/testcase-generate/SKILL.md` — KHÔNG dùng bảng tổng quát hoá CLI/daemon (spec
-`docs/superpowers/specs/2026-07-17-non-web-system-support-design.md` chưa triển khai,
-phạm vi rộng hơn riêng skill này, để dành nâng cấp sau):
+Tổ chức theo 5 tầng tin cậy, mỗi tầng có 2 lựa chọn tương đương (web app / CLI-backend).
+Đọc `CLAUDE.md`'s mục "System Profile" (dòng "Loại hệ thống") để biết CỘT nào áp dụng cho
+dự án đang làm — chỉ dùng ĐÚNG 1 cột cho cả module, không trộn 2 cột trong cùng 1 case:
 
-```
-db_definition > screen_item > message_list > dd > spec
-```
+| Tầng | Web app | CLI/backend |
+|---|---|---|
+| 1 — cao nhất | `db_definition` (DDL/ERD) | `config_definition` (config file sản phẩm) |
+| 2 | `screen_item` (màn hình) | `fixed_format` (định dạng file/protocol cố định) |
+| 3 | `message_list` (catalog lỗi) | `log_format` (định dạng log/mail alert) |
+| 4 | `dd` (văn xuôi DD) | dùng chung |
+| 5 — thấp nhất | `spec` (văn xuôi spec) | dùng chung |
+
+`Loại hệ thống` = `web`/`api-only` → dùng cột Web app. `cli-daemon` → dùng cột CLI/backend.
+`mobile app`/`khác` → chưa có cột riêng, dùng cột Web app tạm, ghi rõ trong `evidence.note_vi`
+là tạm dùng do chưa có tầng riêng cho loại hệ thống này.
 
 Mâu thuẫn giữa 2 nguồn (vd DDL nói khác văn xuôi) → KHÔNG tự chọn bên nào, đó là gap
 (`gap_type: contradiction`).

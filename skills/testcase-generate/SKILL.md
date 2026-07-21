@@ -53,23 +53,25 @@ hồi gửi lại `detail-fill`/BrSE, không phải việc tự sửa hay tự t
 
 ### Nguồn expected, theo thứ tự tin cậy (tham khảo — `detail-fill` là nơi áp dụng)
 
-Bảng dưới đây là thứ tự ưu tiên nguồn evidence mà `detail-fill` đã áp dụng khi
-điền `evidence.source_type` vào `details.yaml`. Giữ lại làm tài liệu tham chiếu để
-hiểu vì sao một `source_type` được ưu tiên hơn cái khác khi đọc case đã sinh —
-skill này KHÔNG tự đi tìm hay tự so sánh lại nguồn, chỉ đọc `source_type` đã có
-sẵn:
+Bảng dưới đây là bảng 5 tầng mà `detail-fill` đã áp dụng khi điền `evidence.source_type`
+vào `details.yaml` (mỗi tầng có 2 lựa chọn tương đương — web app / CLI-backend, dùng đúng
+1 cột theo `CLAUDE.md`'s System Profile). Giữ lại làm tài liệu tham chiếu để hiểu vì sao
+một `source_type` được ưu tiên hơn cái khác khi đọc case đã sinh — skill này KHÔNG tự đi
+tìm hay tự so sánh lại nguồn, chỉ đọc `source_type` đã có sẵn:
 
-1. **DB definition (DDL/ERD)** ← tin cậy nhất. `VARCHAR(32) NOT NULL` là fact,
-   không qua tay dịch, không cãi được.
-2. **Screen item definition** → max length, format, required, default
-3. **Message list** → message ID + nội dung lỗi chính xác
-4. **API spec** → param range, response code
-5. **Văn xuôi DD/spec** ← ưu tiên **thấp nhất**, mơ hồ nhất, qua tay dịch nhiều nhất
+1. **DB definition (DDL/ERD)** hoặc **Config definition** (CLI/backend) ← tin cậy nhất.
+   Fact từ artifact sản phẩm, không qua tay dịch, không cãi được.
+2. **Screen item definition** hoặc **Fixed format** (định dạng file/protocol cố định,
+   CLI/backend) → max length, format, required, default
+3. **Message list** hoặc **Log format** (định dạng log/mail alert, CLI/backend) →
+   message ID + nội dung lỗi chính xác
+4. **DD văn xuôi** — dùng chung cho cả 2 loại hệ thống
+5. **Spec văn xuôi** ← ưu tiên **thấp nhất**, mơ hồ nhất, qua tay dịch nhiều nhất — dùng
+   chung cho cả 2 loại hệ thống
 
-Mâu thuẫn giữa DDL và văn xuôi, hoặc thiếu nguồn 1–3, đã được `detail-fill` xử lý
-thành gap (`evidence_found: false` + `gap_id`) trước khi entry tới được bước này —
-gặp entry như vậy thì bỏ qua theo Quy trình bước 2, không tự đánh giá lại xem
-nguồn nào đáng tin hơn.
+Mâu thuẫn giữa 2 nguồn, hoặc thiếu nguồn tầng 1–3, đã được `detail-fill` xử lý thành gap
+(`evidence_found: false` + `gap_id`) trước khi entry tới được bước này — gặp entry như vậy
+thì bỏ qua theo Quy trình bước 2, không tự đánh giá lại xem nguồn nào đáng tin hơn.
 
 ## Quy trình
 
