@@ -57,7 +57,7 @@ loại tài liệu này CÓ áp dụng, gate KHÔNG fire. Case/màn hình/messag
 ## Bảng ưu tiên nguồn evidence
 
 Tổ chức theo 5 tầng tin cậy, mỗi tầng có 2 lựa chọn tương đương (web app / CLI-backend).
-Đọc `CLAUDE.md`'s mục "System Profile" (dòng "Loại hệ thống") để biết CỘT nào áp dụng cho
+Đọc mục "System Profile" trong `CLAUDE.md` (dòng "Loại hệ thống") để biết CỘT nào áp dụng cho
 dự án đang làm — chỉ dùng ĐÚNG 1 cột cho cả module, không trộn 2 cột trong cùng 1 case:
 
 | Tầng | Web app | CLI/backend |

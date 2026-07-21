@@ -55,7 +55,7 @@ hồi gửi lại `detail-fill`/BrSE, không phải việc tự sửa hay tự t
 
 Bảng dưới đây là bảng 5 tầng mà `detail-fill` đã áp dụng khi điền `evidence.source_type`
 vào `details.yaml` (mỗi tầng có 2 lựa chọn tương đương — web app / CLI-backend, dùng đúng
-1 cột theo `CLAUDE.md`'s System Profile). Giữ lại làm tài liệu tham chiếu để hiểu vì sao
+1 cột theo mục "System Profile" trong `CLAUDE.md`). Giữ lại làm tài liệu tham chiếu để hiểu vì sao
 một `source_type` được ưu tiên hơn cái khác khi đọc case đã sinh — skill này KHÔNG tự đi
 tìm hay tự so sánh lại nguồn, chỉ đọc `source_type` đã có sẵn:
 
