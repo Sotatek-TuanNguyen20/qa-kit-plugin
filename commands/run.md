@@ -49,7 +49,7 @@ Xem `verify[]` của case dùng họ `method` nào:
 
 - **Case trộn cả 2 họ trong cùng 1 `verify[]`** (vd 1 entry `ui_visible` + 1 entry
   `cli_exit_code` trong cùng 1 case): KHÔNG tự động hoá — chuyển nhánh MANUAL, ghi lý do
-  "verify method trộn họ, chưa có cách auto-route an toàn".
+  "verify method trộn họ, chưa có cách tự động định tuyến an toàn".
 
 Case thiếu `verify[]` -> KHÔNG tự chế cách verify. Chuyển sang nhánh manual, ghi lý do.
 
