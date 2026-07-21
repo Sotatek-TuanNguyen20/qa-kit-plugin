@@ -1,28 +1,126 @@
+# Sinh bởi testcase-generate (bước 4/6 của /qa-kit:design), đọc work/login/details.yaml
+# (output thật của detail-fill). Chỉ 5/19 entry có evidence_found: true được lắp thành
+# case dưới đây; 14 entry evidence_found: false bị bỏ qua (gap tương ứng đã có sẵn
+# trong work/login/gaps.yaml, không tạo case, không ghi gap trùng ở đây).
+
 - id: IT-LOGIN-001
+  trace: [DD-2, DD-2.1]
+  test_level: IT
+  category:
+    large: "Nghiệp vụ đăng nhập"
+    medium: "Đăng nhập bằng tài khoản/mật khẩu"
+    small: "Đăng nhập thành công"
+  viewpoint: DATA-02
+  precondition_vi:
+    - "Tài khoản đã được cấp, đang ở trạng thái hoạt động"
+  condition_vi: "Nhập đúng username và password hợp lệ (trong khoảng 8-32 ký tự), bấm đăng nhập — vào được hệ thống"
+  steps:
+    - action_vi: "Nhập username hợp lệ của tài khoản đã được cấp"
+      data: { username: "user01" }
+    - action_vi: "Nhập password hợp lệ (trong khoảng 8–32 ký tự)"
+      data: { password: "Abcd1234" }
+    - action_vi: "Bấm nút đăng nhập"
+  expected_vi: "Đăng nhập thành công, vào được hệ thống (password nằm trong khoảng hợp lệ 8–32 ký tự theo DD-2.1)."
+  evidence:
+    section: "DD-2.1"
+    quote: "Password từ 8 đến 32 ký tự. DDL: VARCHAR(32) NOT NULL CHECK (LENGTH(password) >= 8)"
+    source_type: db_definition
+  priority: P1
+  automatable: false
+
+- id: IT-LOGIN-002
   trace: [DD-2.1]
   test_level: IT
   category:
     large: "Nghiệp vụ đăng nhập"
-    medium: "Xác thực password"
+    medium: "Đăng nhập bằng tài khoản/mật khẩu"
     small: "Password đúng biên dưới"
   viewpoint: DATA-01
   precondition_vi:
-    - "Tài khoản đã được cấp, trạng thái hoạt động"
-  condition_vi: "Password 8 ký tự (min)"
+    - "Tài khoản đã được cấp, đang ở trạng thái hoạt động"
+  condition_vi: "Password đúng 8 ký tự (biên dưới min)"
   steps:
-    - action_vi: "Nhập password 8 ký tự"
+    - action_vi: "Nhập username hợp lệ của tài khoản đã được cấp"
+      data: { username: "user01" }
+    - action_vi: "Nhập password đúng 8 ký tự (biên dưới min)"
       data: { password: "Abcd1234" }
     - action_vi: "Bấm nút đăng nhập"
-  expected_vi: "Đăng nhập thành công, chuyển sang màn hình chính"
+  expected_vi: "Đăng nhập thành công (password 8 ký tự thoả điều kiện >= 8 theo DD-2.1)."
   evidence:
     section: "DD-2.1"
     quote: "Password từ 8 đến 32 ký tự. DDL: VARCHAR(32) NOT NULL CHECK (LENGTH(password) >= 8)"
     source_type: db_definition
     operator: { min: 8, min_op: ">=", max: 32, max_op: "<=" }
   priority: P1
-  tags: [smoke]
-  automatable: true
-  verify:
-    - method: ui_visible
-      target: "màn hình chính"
-      expect: true
+  automatable: false
+
+- id: IT-LOGIN-003
+  trace: [DD-2.1]
+  test_level: IT
+  category:
+    large: "Nghiệp vụ đăng nhập"
+    medium: "Đăng nhập bằng tài khoản/mật khẩu"
+    small: "Password đúng biên trên"
+  viewpoint: DATA-01
+  precondition_vi:
+    - "Tài khoản đã được cấp, đang ở trạng thái hoạt động"
+  condition_vi: "Password đúng 32 ký tự (biên trên max)"
+  steps:
+    - action_vi: "Nhập username hợp lệ của tài khoản đã được cấp"
+      data: { username: "user01" }
+    - action_vi: "Nhập password đúng 32 ký tự (biên trên max)"
+      data: { password: "Abcd1234Abcd1234Abcd1234Abcd1234" }
+    - action_vi: "Bấm nút đăng nhập"
+  expected_vi: "Đăng nhập thành công (password 32 ký tự thoả điều kiện <= 32 theo DD-2.1)."
+  evidence:
+    section: "DD-2.1"
+    quote: "Password từ 8 đến 32 ký tự. DDL: VARCHAR(32) NOT NULL CHECK (LENGTH(password) >= 8)"
+    source_type: db_definition
+    operator: { min: 8, min_op: ">=", max: 32, max_op: "<=" }
+  priority: P1
+  automatable: false
+
+- id: IT-LOGIN-004
+  trace: [DD-5]
+  test_level: IT
+  category:
+    large: "Nghiệp vụ đăng xuất"
+    medium: "Đăng xuất khỏi hệ thống qua thanh điều hướng"
+    small: "Đăng xuất thành công"
+  viewpoint: TIMING-02
+  precondition_vi:
+    - "Đang trong phiên đăng nhập hợp lệ"
+  condition_vi: "Bấm 'Đăng xuất' → phiên chuyển sang trạng thái đã đăng xuất, redirect về màn hình đăng nhập, truy cập lại trang cần đăng nhập bị chặn"
+  steps:
+    - action_vi: "Trong khi đang ở phiên đăng nhập hợp lệ, bấm nút 'Đăng xuất' trên thanh điều hướng"
+  expected_vi: "Phiên đăng nhập kết thúc (đăng xuất thành công)."
+  evidence:
+    section: "DD-5"
+    quote: "Người dùng bấm nút \"Đăng xuất\" trên thanh điều hướng để kết thúc phiên đăng nhập."
+    source_type: dd
+  priority: P1
+  automatable: false
+
+- id: IT-LOGIN-005
+  trace: [DD-5]
+  test_level: IT
+  category:
+    large: "Nghiệp vụ đăng xuất"
+    medium: "Đăng xuất khỏi hệ thống qua thanh điều hướng"
+    small: "Phạm vi xoá session khi đăng xuất"
+  viewpoint: DATA-06
+  precondition_vi:
+    - "Đang trong phiên đăng nhập hợp lệ"
+    - "Đã đăng nhập đồng thời trên ≥2 thiết bị/trình duyệt khác nhau"
+  condition_vi: "Đăng xuất ở 1 thiết bị, kiểm tra phiên đăng nhập ở thiết bị/trình duyệt khác — bị xoá toàn bộ hay chỉ thiết bị hiện tại (DD-5 tự nêu đây là điểm chưa rõ)"
+  steps:
+    - action_vi: "Đăng nhập cùng 1 tài khoản trên ≥2 thiết bị/trình duyệt khác nhau"
+    - action_vi: "Ở thiết bị thứ nhất, bấm nút 'Đăng xuất' trên thanh điều hướng"
+    - action_vi: "Kiểm tra trạng thái phiên đăng nhập ở thiết bị thứ hai"
+  expected_vi: "Chỉ session ở thiết bị hiện tại (thiết bị vừa đăng xuất) bị xoá; thiết bị/trình duyệt khác vẫn giữ trạng thái đăng nhập cho tới khi token hết hạn."
+  evidence:
+    section: "GAP-004 (đã trả lời)"
+    quote: "Chỉ xoá session ở thiết bị hiện tại; các thiết bị khác vẫn giữ đăng nhập cho tới khi token hết hạn."
+    source_type: spec
+  priority: P1
+  automatable: false

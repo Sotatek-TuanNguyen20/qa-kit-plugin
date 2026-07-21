@@ -1,10 +1,13 @@
 ---
 name: testcase-generate
 description: >
-  Sinh test case YAML từ test condition đã map viewpoint. Dùng khi đã chạy xong
-  scenario-map và viewpoint-apply, cần ra artifact test case cuối cùng theo
-  schemas/testcase.schema.yaml. KHÔNG dùng để đọc source code. KHÔNG dùng để
-  sinh Excel trực tiếp.
+  Sinh test case YAML từ work/$1/details.yaml (output của detail-fill — evidence
+  đã được tìm sẵn cho từng entry, đánh dấu evidence_found true/false). Dùng khi đã
+  chạy xong scenario-map, viewpoint-apply và detail-fill, cần ra artifact test
+  case cuối cùng theo schemas/testcase.schema.yaml. Việc tìm evidence trong docs/
+  đã chuyển sang detail-fill — skill này chỉ lắp ráp case từ evidence có sẵn,
+  KHÔNG tự tìm evidence. KHÔNG dùng để đọc source code. KHÔNG dùng để sinh Excel
+  trực tiếp.
 ---
 
 # testcase-generate
@@ -19,12 +22,13 @@ là bước duy nhất trong pipeline **bị cấm sáng tạo**.
 | Việc | Được phép sáng tạo? |
 |---|---|
 | Nghĩ ra condition cần test | ✅ Có (đã làm ở viewpoint-apply) |
-| Điền expected result | ❌ **KHÔNG.** Phải trích từ doc. |
+| Điền expected result | ❌ **KHÔNG.** Phải lấy từ `evidence` có sẵn trong `details.yaml` (đã được `detail-fill` trích từ doc). |
 
 > "Case này cần test" — tester tự nghĩ ra được.
 > "Kết quả đúng là X" — phải có người xác nhận.
 
-**Không tìm được căn cứ trong doc cho expected → KHÔNG tạo case. Ghi vào gap-report.**
+**Entry `evidence_found: false` trong `details.yaml` → KHÔNG tạo case.** Gap đã được
+`detail-fill` ghi sẵn vào `work/$1/gaps.yaml` rồi, không tự tìm lại hay ghi trùng.
 
 Đây là failure mode nguy hiểm nhất: model sẽ bịa expected result rất trôi chảy,
 nghe hợp lý, và reviewer sẽ không bắt được. Thà thiếu case còn hơn có case sai
@@ -33,42 +37,57 @@ mà không ai biết.
 ## Nguồn được đọc
 
 Chỉ đọc:
-- `docs/` — BD, DD và **phụ lục** (ưu tiên cao nhất, xem dưới)
+- `work/$1/details.yaml` — output của `detail-fill`, nguồn DUY NHẤT cho evidence.
+  Mỗi entry đã có sẵn `evidence_found` + (`evidence.section`/`quote`/`source_type`/
+  `operator` nếu tìm thấy) hoặc `gap_id` (nếu không), cùng mọi field kế thừa từ
+  `conditions.yaml` (`large/medium/small/trace/test_level/viewpoint/priority/
+  condition_vi/precondition_vi`). Skill này KHÔNG tự đọc `docs/` để tìm hay đối
+  chiếu lại evidence nữa — đó là việc của `detail-fill`.
 - `${CLAUDE_PLUGIN_ROOT}/context/viewpoints.md`, `${CLAUDE_PLUGIN_ROOT}/context/conventions.md`,
-  `./context/project-glossary.md`, `./context/viewpoints-local.md`
-- output của `scenario-map`, `viewpoint-apply`
+  `./context/project-glossary.md`, `./context/viewpoints-local.md` — để kiểm tra
+  `viewpoint` ID hợp lệ và `category` bám business flow khi lắp ráp case.
 
-**Cấm tuyệt đối:** source code, DB thật, staging. Không có thì hỏi, không suy đoán
-từ "thường thì hệ thống sẽ...".
+**Cấm tuyệt đối:** tự đọc `docs/` để tìm/đối chiếu lại evidence, source code, DB
+thật, staging. Nghi ngờ evidence trong `details.yaml` sai hoặc thiếu → đó là phản
+hồi gửi lại `detail-fill`/BrSE, không phải việc tự sửa hay tự tìm thêm ở đây.
 
-### Nguồn expected, theo thứ tự tin cậy
+### Nguồn expected, theo thứ tự tin cậy (tham khảo — `detail-fill` là nơi áp dụng)
 
-Không có source code thì boundary/expected chỉ đến từ đây:
+Bảng dưới đây là thứ tự ưu tiên nguồn evidence mà `detail-fill` đã áp dụng khi
+điền `evidence.source_type` vào `details.yaml`. Giữ lại làm tài liệu tham chiếu để
+hiểu vì sao một `source_type` được ưu tiên hơn cái khác khi đọc case đã sinh —
+skill này KHÔNG tự đi tìm hay tự so sánh lại nguồn, chỉ đọc `source_type` đã có
+sẵn:
 
 1. **DB definition (DDL/ERD)** ← tin cậy nhất. `VARCHAR(32) NOT NULL` là fact,
-   không qua tay dịch, không cãi được. Luôn kiểm tra đây TRƯỚC.
+   không qua tay dịch, không cãi được.
 2. **Screen item definition** → max length, format, required, default
 3. **Message list** → message ID + nội dung lỗi chính xác
 4. **API spec** → param range, response code
 5. **Văn xuôi DD/spec** ← ưu tiên **thấp nhất**, mơ hồ nhất, qua tay dịch nhiều nhất
 
-Mâu thuẫn giữa DDL và văn xuôi → **không tự chọn bên nào**. Đó là gap, hỏi BrSE.
-Thiếu 1–3 → finding lớn, gap-report ngay.
+Mâu thuẫn giữa DDL và văn xuôi, hoặc thiếu nguồn 1–3, đã được `detail-fill` xử lý
+thành gap (`evidence_found: false` + `gap_id`) trước khi entry tới được bước này —
+gặp entry như vậy thì bỏ qua theo Quy trình bước 2, không tự đánh giá lại xem
+nguồn nào đáng tin hơn.
 
 ## Quy trình
 
-1. Đọc test condition + viewpoint ID.
-2. Với mỗi condition, tìm căn cứ expected trong `docs/`.
-3. **Trích nguyên văn** từ `docs/` vào `evidence.quote`. KHÔNG paraphrase, KHÔNG tóm tắt.
-4. Ghi `source_type`. Ưu tiên `db_definition` > `screen_item` > `message_list` > `dd` > `spec`.
-5. Không tìm được căn cứ → **dừng, append 1 entry vào `work/$1/gaps.yaml`**
-   theo schema ở `skills/gap-report/SKILL.md` (`gap_type` phù hợp:
-   `missing_evidence`/`contradiction`/`missing_operator`/`missing_message_list`/
-   `missing_screen_item`; `severity` tính theo bảng floor trong file đó; `id`
-   gán theo quy tắc "Cách gán id khi APPEND entry mới" cũng trong file đó —
-   đọc `gaps.yaml` hiện có, lấy số lớn nhất + 1, không tự đặt `GAP-001` mù),
-   không tạo case.
-6. Validate schema trước khi ghi file.
+1. Đọc `work/$1/details.yaml` (KHÔNG phải `conditions.yaml` — evidence đã được
+   `detail-fill` tìm sẵn, bước này không tự tìm evidence trong `docs/` nữa).
+2. Với mỗi entry `evidence_found: false` → **bỏ qua, không tạo case**. Gap đã được
+   `detail-fill` ghi vào `work/$1/gaps.yaml` rồi, không ghi trùng.
+3. Với mỗi entry `evidence_found: true`, lấy nguyên `evidence` đã có sẵn (section/
+   quote/source_type/operator) — KHÔNG tự tìm lại trong `docs/`, KHÔNG tự đổi
+   `evidence.quote` đã có.
+4. Viết `expected_vi` — suy ra TỪ ĐÚNG `evidence.quote` đó, KHÔNG suy diễn thêm gì
+   ngoài evidence (luật này không đổi — chỉ đổi NGUỒN đọc evidence, không đổi mức độ
+   nghiêm ngặt).
+5. Sinh `steps[]` — hành động cụ thể (UI/CLI) hiện thực hoá `condition_vi`.
+6. Gán `id` (`ST-<MODULE>-NNN` hoặc `IT-<MODULE>-NNN` theo `test_level`, số thứ tự
+   tăng dần trong module), `tags`, `automatable`, `verify[]` (nếu automatable — case
+   thiếu cách verify rõ ràng thì để `automatable: false`, không tự chế cách verify).
+7. Validate schema (`schemas/testcase.schema.yaml`) trước khi ghi file.
 
 ### Boundary: BẮT BUỘC `evidence.operator`
 
@@ -82,13 +101,15 @@ Bản dịch VI của comtor **không phân biệt được toán tử biên**:
 | "dưới 32"   | `< 32`  | 31 OK / 32 NG |
 
 Cùng một câu VI → boundary **lệch 1** → cả loạt DATA-01 sai, và sai **im lặng**
-tới tận UAT.
+tới tận UAT. Đây là lý do `detail-fill` bắt buộc phải resolve `operator` tường
+minh (ưu tiên `db_definition`, không suy diễn từ văn xuôi, gap nếu không ai xác
+nhận) trước khi entry tới được bước này.
 
-Với `viewpoint: DATA-01`:
-- **Cấm suy diễn toán tử từ văn xuôi.**
-- Ưu tiên tuyệt đối `db_definition` (DDL nói `VARCHAR(32)` là hết cãi).
-- DDL không có → hỏi comtor/BrSE điền `operator` tường minh.
-- Không ai xác nhận → **gap-report, KHÔNG tạo case**.
+Với `viewpoint: DATA-01`, việc của skill này chỉ là:
+- **Copy nguyên `evidence.operator`** đã có sẵn trong `details.yaml` — cấm tự suy
+  diễn hoặc tự đổi operator, kể cả khi văn xuôi `condition_vi` đọc có vẻ mơ hồ.
+- Entry `evidence_found: false` (nghĩa là chưa ai xác nhận operator) → bỏ qua
+  theo Quy trình bước 2, không tự đoán operator để "cho đủ case".
 
 Đây là chi phí 1 dòng YAML để chặn class bug đắt nhất.
 
@@ -155,19 +176,26 @@ sinh ra từ YAML — deterministic, reproduce được.
       expect: true
 ```
 
-Case sinh đôi bắt buộc: `IT-LOGIN-004` với password 7 ký tự (min-1) → expected lấy
-từ メッセージ一覧. Nếu メッセージ一覧 không có message cho case này → **gap-report**,
-không tự chế "hiển thị thông báo lỗi".
+Case sinh đôi bắt buộc: `IT-LOGIN-004` với password 7 ký tự (min-1) — tương ứng
+1 entry riêng trong `details.yaml`. Nếu entry đó có `evidence_found: false` (vd
+chưa có メッセージ一覧 xác nhận nội dung lỗi) → **bỏ qua theo Quy trình bước 2**,
+không tự chế "hiển thị thông báo lỗi" để lấp chỗ trống — gap đã được `detail-fill`
+ghi vào `work/$1/gaps.yaml` rồi.
 
 ## Self-check trước khi ghi
 
-- [ ] Mọi case có `evidence.quote` trích nguyên văn, không paraphrase?
-- [ ] Case DATA-01 có `evidence.operator` tường minh chưa? (không có = reject)
-- [ ] Đã kiểm tra DDL/ERD TRƯỚC khi lấy boundary từ văn xuôi chưa?
+- [ ] Mọi case có `evidence.quote` copy NGUYÊN VĂN từ `details.yaml`, không tự
+      paraphrase/viết lại khi lắp ráp?
+- [ ] Case DATA-01 có `evidence.operator` tường minh, copy nguyên từ `details.yaml`
+      chưa? (không có = reject, không tự suy diễn)
+- [ ] Mọi entry `evidence_found: true` đã lấy `evidence` nguyên vẹn từ
+      `details.yaml` chưa (không tự đọc lại `docs/` để đối chiếu/tìm thêm)?
 - [ ] Case `automatable: true` có `verify[]` chưa?
-- [ ] Không case nào có expected do suy đoán?
+- [ ] Không case nào có expected do suy đoán ngoài `evidence.quote` chưa?
 - [ ] `category` bám business flow, không copy mục lục DD?
 - [ ] `viewpoint` là ID có thật trong viewpoints.md?
 - [ ] `trace` đúng level (IT→DD, ST→BD)?
-- [ ] Boundary có đủ cặp (min/min-1, max/max+1)?
-- [ ] Case không có căn cứ đã append vào `work/$1/gaps.yaml` đúng schema chưa (không phải chỉ "ghi gap-report" chung chung)?
+- [ ] Boundary có đủ cặp (min/min-1, max/max+1) — với điều kiện cả 2 entry tương
+      ứng đều `evidence_found: true` trong `details.yaml`?
+- [ ] Mọi entry `evidence_found: false` đã bị bỏ qua chưa (không tạo case, không
+      tự ghi thêm gap mới — `detail-fill` đã ghi rồi)?
