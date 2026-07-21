@@ -1,0 +1,85 @@
+- id: IT-SEND-001
+  trace: [DD-1]
+  test_level: IT
+  category:
+    large: "Nghiệp vụ nhận và chuyển tiếp alert"
+    medium: "Nhận mail Nagios và forward PagerDuty"
+    small: "Body JSON chỉ chứa 4 field top-level"
+  viewpoint: DATA-05
+  precondition_vi:
+    - "Gateway đã cài, daemon đang chạy"
+    - "PagerDuty mock chạy, log request body"
+  condition_vi: "Thả 1 mail Nagios hợp lệ vào maildir, kiểm tra body JSON gửi PagerDuty"
+  steps:
+    - action_vi: "Copy file mail mẫu vào maildir"
+      data: { mail_file: "samples/nagios-trigger.eml" }
+    - action_vi: "Chờ 3 giây cho daemon xử lý"
+    - action_vi: "Xem log PagerDuty mock nhận request"
+  expected_vi: "Body JSON chỉ có 4 field top-level: routing_key, event_action, dedup_key, payload."
+  evidence:
+    section: "config.yaml pd.payload_template"
+    quote: "payload: { summary, severity, source, timestamp } — 4 field top-level cố định, không có field nội bộ Gateway"
+    source_type: config_definition
+  priority: P1
+  automatable: true
+  verify:
+    - method: log_grep
+      target: "pd-mock container log"
+      expect: "POST /v2/enqueue với đúng 4 field top-level"
+
+- id: IT-SEND-002
+  trace: [DD-1]
+  test_level: IT
+  category:
+    large: "Nghiệp vụ nhận và chuyển tiếp alert"
+    medium: "Nhận mail Nagios và forward PagerDuty"
+    small: "Mail parse fail — thiếu item_id"
+  viewpoint: DATA-04
+  precondition_vi:
+    - "Gateway đã cài, daemon đang chạy"
+  condition_vi: "Thả mail thiếu field bắt buộc, kiểm tra Gateway không crash và ghi log lỗi rõ ràng"
+  steps:
+    - action_vi: "Copy file mail mẫu (cố ý thiếu item_id) vào maildir"
+      data: { mail_file: "samples/bad-no-itemid.eml" }
+    - action_vi: "Kiểm tra exit code của lần xử lý qua log"
+  expected_vi: "Daemon không crash (service vẫn active), log ghi rõ lý do parse fail (thiếu item_id)."
+  evidence:
+    section: "config.yaml parser.required_fields"
+    quote: "required_fields: [tbl_kanshi_koumoku_id, detection_datetime, mst_alarm_rearm_id] — thiếu field nào trong danh sách này thì reject, không crash"
+    source_type: config_definition
+  priority: P1
+  automatable: true
+  verify:
+    - method: cli_exit_code
+      target: "systemctl is-active rocgw"
+      expect: "active"
+    - method: log_grep
+      target: "journalctl -u rocgw"
+      expect: "parse fail: missing tbl_kanshi_koumoku_id"
+
+- id: IT-SEND-003
+  trace: [DD-1]
+  test_level: IT
+  category:
+    large: "Nghiệp vụ nhận và chuyển tiếp alert"
+    medium: "Nhận mail Nagios và forward PagerDuty"
+    small: "File mail đã xử lý được archive đúng thư mục"
+  viewpoint: DATA-06
+  precondition_vi:
+    - "Gateway đã cài, daemon đang chạy"
+  condition_vi: "Sau khi xử lý xong 1 mail hợp lệ, kiểm tra file gốc được di chuyển sang thư mục completed"
+  steps:
+    - action_vi: "Copy file mail mẫu vào maildir"
+      data: { mail_file: "samples/nagios-trigger.eml" }
+    - action_vi: "Chờ xử lý xong, kiểm tra thư mục completed"
+  expected_vi: "File mail gốc không còn trong maildir/new, xuất hiện trong spool_root/completed/."
+  evidence:
+    section: "config.yaml spool.completed_dir"
+    quote: "completed_dir: {spool_root}/completed — mail xử lý xong (thành công hoặc thất bại đều) được move vào đây, không xoá"
+    source_type: config_definition
+  priority: P2
+  automatable: true
+  verify:
+    - method: file_exists
+      target: "{spool_root}/completed/nagios-trigger.eml"
+      expect: true
