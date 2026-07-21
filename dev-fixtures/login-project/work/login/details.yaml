@@ -46,7 +46,7 @@
   precondition_vi: ["Tài khoản đã được cấp, đang ở trạng thái hoạt động"]
   evidence_found: false
   evidence: null
-  gap_id: "GAP-005"
+  gap_id: "GAP-002"
 
 - large: "Nghiệp vụ đăng nhập"
   medium: "Đăng nhập bằng tài khoản/mật khẩu"
@@ -143,7 +143,7 @@
   precondition_vi: ["Tài khoản đã được liên kết với SSO nội bộ công ty"]
   evidence_found: false
   evidence: null
-  gap_id: "GAP-011"
+  gap_id: "GAP-001"
 
 - large: "Nghiệp vụ đăng nhập"
   medium: "Đăng nhập qua SSO nội bộ công ty"
@@ -250,9 +250,12 @@
   precondition_vi:
     - "Đang trong phiên đăng nhập hợp lệ"
     - "Đã đăng nhập đồng thời trên ≥2 thiết bị/trình duyệt khác nhau"
-  evidence_found: false
-  evidence: null
-  gap_id: "GAP-018"
+  evidence_found: true
+  evidence:
+    section: "GAP-004 (đã trả lời)"
+    quote: "Chỉ xoá session ở thiết bị hiện tại; các thiết bị khác vẫn giữ đăng nhập cho tới khi token hết hạn."
+    source_type: spec
+  gap_id: null
 
 - large: "Nghiệp vụ đăng xuất"
   medium: "Đăng xuất khỏi hệ thống qua thanh điều hướng"

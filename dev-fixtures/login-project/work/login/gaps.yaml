@@ -57,23 +57,25 @@
   status: answered
   answer_vi: "Chỉ xoá session ở thiết bị hiện tại; các thiết bị khác vẫn giữ đăng nhập cho tới khi token hết hạn."
 
-# GAP-005..019: raised bởi detail-fill (bước 3), chạy trên conditions.yaml thật (19
-# condition của Task 2) đối chiếu docs/login.md. Không đối chiếu ngược lại GAP-001..004
-# ở trên (fixture cũ, seed riêng cho gap-report) — detail-fill tự tìm evidence độc lập
-# theo đúng quy trình của nó, nên GAP-011/GAP-018 trùng chủ đề với GAP-001/GAP-004 là
-# có chủ đích (xem task-3-report.md phần "Concerns").
-- id: GAP-005
-  raised_at: "2026-07-21T09:20:00+07:00"
-  raised_by: detail-fill
-  step: 3
-  trace: [DD-2.1]
-  condition_ref: "Password dưới biên dưới"
-  gap_type: missing_message_list
-  severity: P1
-  description_vi: "Không tìm được message lỗi cho case password 7 ký tự (dưới biên min 8) — message list chưa có trong docs/."
-  question_vi: "Message lỗi khi password dưới 8 ký tự (biên dưới) là gì? Cần message ID/nội dung cụ thể."
-  status: open
-  answer_vi: ""
+# GAP-006..019 (trừ GAP-011, GAP-018): raised bởi detail-fill (bước 3), chạy trên
+# conditions.yaml thật (19 condition của Task 2) đối chiếu docs/login.md. Áp dụng rule
+# dedup ở skills/detail-fill/SKILL.md — trước khi append gap mới, đối chiếu ngược lại
+# TOÀN BỘ gaps.yaml hiện có, kể cả GAP-001..004 phía trên. Đối chiếu phát hiện 3 entry
+# hỏi trùng câu hỏi với gap đã có, nên không giữ lại làm entry riêng:
+# - GAP-005 (đã từng được cấp id, hỏi trùng GAP-002 — cùng trace DD-2.1, cùng hỏi
+#   "message lỗi khi password dưới 8 ký tự"; GAP-002 đang status: open) -> condition
+#   "Password dưới biên dưới" trong details.yaml reuse gap_id: "GAP-002", entry GAP-005
+#   không còn ở đây nữa.
+# - GAP-011 (hỏi trùng GAP-001 — cùng trace DD-4, cùng hỏi field/màn hình cho luồng SSO;
+#   GAP-001 đang status: open) -> condition "Đăng nhập SSO thành công" reuse
+#   gap_id: "GAP-001", entry GAP-011 không còn ở đây nữa.
+# - GAP-018 (hỏi trùng GAP-004 — cùng trace DD-5, cùng hỏi phạm vi xoá session khi đăng
+#   xuất; nhưng GAP-004 đã status: answered) -> condition "Phạm vi xoá session khi đăng
+#   xuất" chuyển thành evidence_found: true, dùng answer_vi của GAP-004 làm evidence
+#   (source_type: spec), entry GAP-018 không còn ở đây nữa.
+# ID không renumber để lấp chỗ trống — theo rule "không tái sử dụng ID" ở
+# skills/gap-report/SKILL.md, GAP-005/GAP-011/GAP-018 đơn giản không còn xuất hiện
+# trong sequence (xem work/login/details.yaml để biết condition nào trỏ về gap_id nào).
 - id: GAP-006
   raised_at: "2026-07-21T09:25:00+07:00"
   raised_by: detail-fill
@@ -132,18 +134,6 @@
   severity: P3
   description_vi: "Doc chưa đề cập chính sách giới hạn số lần đăng nhập sai/khoá tạm tài khoản."
   question_vi: "Có giới hạn số lần đăng nhập sai liên tiếp không? Có khoá tạm tài khoản không? Bao lâu?"
-  status: open
-  answer_vi: ""
-- id: GAP-011
-  raised_at: "2026-07-21T09:50:00+07:00"
-  raised_by: detail-fill
-  step: 3
-  trace: [DD-4]
-  condition_ref: "Đăng nhập SSO thành công"
-  gap_type: missing_screen_item
-  severity: P1
-  description_vi: "DD-4 tự nêu chưa mô tả field/màn hình cụ thể cho luồng SSO — không đủ căn cứ cho hành vi redirect/màn hình sau khi xác thực SSO thành công."
-  question_vi: "Màn hình/luồng redirect sau khi xác thực SSO thành công cụ thể ra sao? Cần screen item definition cho DD-4."
   status: open
   answer_vi: ""
 - id: GAP-012
@@ -216,18 +206,6 @@
   severity: P3
   description_vi: "Doc chưa đề cập hành vi khi yêu cầu quên mật khẩu nhiều lần liên tiếp (gửi trùng email hay chặn spam)."
   question_vi: "Yêu cầu 'Quên mật khẩu' liên tiếp nhiều lần thì hệ thống gửi nhiều email trùng hay chặn/giới hạn?"
-  status: open
-  answer_vi: ""
-- id: GAP-018
-  raised_at: "2026-07-21T10:25:00+07:00"
-  raised_by: detail-fill
-  step: 3
-  trace: [DD-5]
-  condition_ref: "Phạm vi xoá session khi đăng xuất"
-  gap_type: ambiguous
-  severity: P1
-  description_vi: "DD-5 tự nêu chưa rõ đăng xuất có xoá session ở tất cả thiết bị hay chỉ thiết bị hiện tại."
-  question_vi: "Đăng xuất có xoá session ở tất cả thiết bị hay chỉ thiết bị hiện tại đang dùng?"
   status: open
   answer_vi: ""
 - id: GAP-019

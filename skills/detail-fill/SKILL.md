@@ -74,6 +74,25 @@ Bản dịch VI không phân biệt được `>=` và `>` ("trên 8 ký tự" = 
 toán tử từ văn xuôi — ưu tiên tuyệt đối DDL (`VARCHAR(32)` là fact). DDL không có → hỏi
 comtor/BrSE. Không ai xác nhận → gap (`gap_type: missing_operator`), KHÔNG tự đoán.
 
+### Dedup: kiểm tra `gaps.yaml` hiện có trước khi append gap mới
+
+Trước khi tạo entry gap mới ở bước 5 dưới đây, đọc TOÀN BỘ `work/$1/gaps.yaml` hiện có
+(kể cả entry `status: answered`) — không chỉ phần do `detail-fill` tự ghi — và tìm xem
+đã có entry nào cùng `trace` với condition đang xử lý, đang hỏi CÙNG một câu hỏi cốt lõi
+hay không (so khớp theo nội dung/ý câu hỏi, không cần trùng chữ 100%). Có 2 trường hợp:
+
+- **Entry trùng đã `status: answered`** → KHÔNG tạo gap mới. Coi `answer_vi` của entry
+  đó là evidence cho condition hiện tại: `evidence_found: true`, `evidence.quote` =
+  nguyên văn `answer_vi` (không diễn giải lại), `evidence.section` = tham chiếu tới gap
+  gốc (vd `"GAP-004 (đã trả lời)"`), `evidence.source_type: spec` (câu trả lời chính
+  thức đã được BrSE xác nhận được coi ngang tầng evidence `spec`), `gap_id: null`.
+- **Entry trùng đang `status: open`** → KHÔNG tạo gap mới. Dùng `id` có sẵn của entry đó
+  làm `gap_id` cho condition hiện tại — nhiều condition có thể cùng trỏ về 1 gap còn mở,
+  không tạo thêm entry trùng trong `gaps.yaml`.
+
+Chỉ tạo gap mới (bước 5) khi không có entry nào — mở hay đã trả lời — đang hỏi cùng câu
+hỏi đó.
+
 ## Quy trình
 
 1. Chạy gate cấu trúc (bước 0 ở trên). Gate fail → dừng, không làm bước nào dưới đây.
@@ -83,13 +102,15 @@ comtor/BrSE. Không ai xác nhận → gap (`gap_type: missing_operator`), KHÔN
 4. Tìm được → ghi `evidence: {section, quote, source_type, operator}` (operator chỉ
    khi DATA-01) vào `details.yaml`, `evidence_found: true`, `gap_id: null`.
 5. Không tìm được (hoặc mâu thuẫn nguồn, hoặc DATA-01 thiếu operator không ai xác
-   nhận) → append 1 entry vào `work/$1/gaps.yaml` theo schema đầy đủ trong
-   `skills/gap-report/SKILL.md` (chọn đúng `gap_type`: `missing_evidence` /
-   `contradiction` / `missing_operator` / `missing_message_list` /
-   `missing_screen_item`; `severity` tính theo bảng floor trong file đó; `id` gán
-   theo rule ở đó — đọc `gaps.yaml` hiện có, lấy số lớn nhất + 1, KHÔNG tái sử dụng
-   ID). Ghi vào `details.yaml`: `evidence_found: false`, `evidence: null`,
-   `gap_id: "<id vừa tạo>"`.
+   nhận) → TRƯỚC KHI append gap mới, áp dụng rule dedup ở mục "Dedup: kiểm tra
+   `gaps.yaml` hiện có trước khi append gap mới" bên trên. Chỉ khi không có entry nào
+   (open lẫn answered) đã hỏi cùng câu hỏi mới append 1 entry mới vào
+   `work/$1/gaps.yaml` theo schema đầy đủ trong `skills/gap-report/SKILL.md` (chọn đúng
+   `gap_type`: `missing_evidence` / `contradiction` / `missing_operator` /
+   `missing_message_list` / `missing_screen_item`; `severity` tính theo bảng floor
+   trong file đó; `id` gán theo rule ở đó — đọc `gaps.yaml` hiện có, lấy số lớn nhất +
+   1, KHÔNG tái sử dụng ID). Ghi vào `details.yaml`: `evidence_found: false`,
+   `evidence: null`, `gap_id: "<id vừa tạo>"`.
 6. Giữ nguyên mọi field khác từ `conditions.yaml` (large/medium/small/trace/
    test_level/viewpoint/priority/condition_vi/precondition_vi) — không sửa, chỉ bổ
    sung thêm.
@@ -143,6 +164,9 @@ Entry thiếu evidence:
       xuôi chưa?
 - [ ] Mọi condition thiếu evidence đã append gap đúng schema + đúng rule `id`
       (max hiện có + 1) chưa?
+- [ ] Trước khi append gap mới, đã đọc hết `gaps.yaml` hiện có (kể cả `answered`) và
+      xác nhận không có gap nào khác đang hỏi cùng câu hỏi chưa — không có gap mới nào
+      trùng lặp với entry `open` hoặc `answered` đã có sẵn?
 - [ ] Mâu thuẫn nguồn (DDL vs văn xuôi) có bị tự chọn 1 bên không, hay đã ghi thành
       gap `contradiction`?
 - [ ] Field kế thừa từ `conditions.yaml` có bị sửa nhầm không (chỉ được bổ sung,
