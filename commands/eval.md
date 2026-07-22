@@ -44,6 +44,9 @@ Chi tiết cây quyết định + bảng bẫy: `${CLAUDE_PLUGIN_ROOT}/skills/te
 
 Ghi ngược vào `results/$1-r<N>.yaml`: `triage`, `triage_confidence`, `reason`, `bug_id`.
 
+Khi `triage: A_bug`, gán thêm `priority` (P1/P2/P3): regression (`prev_status: pass`
++ `status: fail`) luôn `P1`; còn lại QC gán theo mức độ ảnh hưởng nghiệp vụ.
+
 Rồi in:
 ```
 Round 2 / build v1.2.3

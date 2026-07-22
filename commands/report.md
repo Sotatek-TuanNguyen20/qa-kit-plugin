@@ -12,9 +12,10 @@ allowed-tools: Read, Write
 
 | Chỉ số | Công thức | Ghi chú |
 |---|---|---|
-| 消化率 (execution rate) | (đã chạy)/(tổng) | blocked KHÔNG tính là đã chạy |
+| 消化率 (execution rate) | (đã chạy)/(tổng) | blocked và skipped đều KHÔNG tính là đã chạy |
 | Pass rate | pass/(đã chạy) | |
 | 未消化 | not_run + blocked | tách riêng 2 con số |
+| Skipped | đếm riêng | cố ý bỏ, KHÔNG gộp vào 未消化 lẫn "đã chạy", luôn báo kèm skip_reason |
 | Bug còn mở | A_bug chưa đóng | chia P1/P2/P3 |
 | **Regression** | prev_status=pass & status=fail | **để LÊN ĐẦU báo cáo** |
 
@@ -34,6 +35,15 @@ Trộn 2 cái này là bóp méo báo cáo:
 Nhiều `blocked` mà pass rate cao = **báo cáo lạc quan giả**. Phải nêu rõ:
 "Pass 95% nhưng 30 case blocked, chưa biết chất lượng vùng đó."
 
+## skipped ≠ đã chạy
+
+`skipped` = **cố ý bỏ**, không phải đã chạy. Không được tính vào tử số của 消化率 —
+tính vào là thổi phồng execution rate giả, giống hệt việc để `blocked` lọt vào
+"đã chạy" ở dòng đầu bảng trên.
+
+Luôn nêu rõ con số, không chôn vào phần bù: "Đã chạy 40/50, trong đó not_run 3,
+blocked 2, skipped 5 (xem skip_reason từng case)."
+
 ## Bug convergence
 
 Vẽ số bug mới phát hiện theo round:
@@ -47,7 +57,7 @@ Con số này quan trọng hơn pass rate.
 
 1. Kết luận 1 dòng: đạt exit criteria chưa? (Có/Không + lý do)
 2. **Regression** (nếu có) ← lên trước mọi thứ
-3. 消化率 + 未消化 (tách not_run / blocked)
+3. 消化率 + 未消化 (tách not_run / blocked) + skipped (đếm riêng, không gộp)
 4. Bug còn mở theo severity
 5. Bug convergence qua các round
 6. Case triage_confidence=low -> cần human soi
@@ -57,5 +67,6 @@ Con số này quan trọng hơn pass rate.
 
 - Sửa `testcases/` hay `results/`
 - Gộp blocked vào not_run
+- Gộp skipped vào đã chạy (tính vào tử số 消化率)
 - Báo pass rate mà không báo số blocked
 - Kết luận "OK để release" khi bug chưa hội tụ

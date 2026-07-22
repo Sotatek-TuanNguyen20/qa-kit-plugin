@@ -54,9 +54,24 @@ properties:
         triage_confidence:
           type: string
           enum: [high, low]
+        reason:
+          type: string
+          description: >
+            Diễn giải tự do (free-text) vì sao gán giá trị 'triage' này. Ghi bởi
+            /qa-kit:eval. KHÁC với scope_reason (vì sao round này chạy đúng case này),
+            skip_reason (vì sao case bị skip) và blocked_by (bug nào đang chặn) —
+            4 field "lý do" khác nhau, đừng lẫn.
         bug_id:
           type: string
           description: "Link sang bug tracker khi triage=A_bug"
+        priority:
+          type: string
+          enum: [P1, P2, P3]
+          description: >
+            Độ ưu tiên xử lý bug, gán khi triage=A_bug (không bắt buộc cho case khác).
+            Regression (prev_status=pass -> status=fail) luôn P1; còn lại QC gán theo
+            mức độ ảnh hưởng nghiệp vụ. /qa-kit:report dùng field này để chia bug còn
+            mở theo P1/P2/P3.
 
         blocked_by:
           type: string
