@@ -90,11 +90,11 @@ never fabricate a workaround.
   non-interchangeable values (`pass/fail/blocked/skipped/not_run`) — `blocked` (something else is
   blocking execution) is never folded into `fail` or `skipped`. `prev_status: pass` +
   `status: fail` = regression, always highest priority.
-- `work/$1/gaps.yaml` (project-side, accumulator pattern) — skills along the design chain append
-  gap entries as they find missing/contradictory evidence; `gap-report` only reads, groups by
-  `severity`, and renders — it never re-detects or recomputes severity. The floor table for
-  computing `severity` from `gap_type` lives in `skills/gap-report/SKILL.md` and is the single
-  source of truth other skills must follow when appending.
+- `work/$1/gaps.yaml` (project-side, accumulator pattern) — `detail-fill` (the only appender
+  today) appends gap entries as it finds missing/contradictory evidence; `gap-report` only reads,
+  groups by `severity`, and renders — it never re-detects or recomputes severity. The floor table
+  for computing `severity` from `gap_type` lives in `skills/gap-report/SKILL.md` and is the single
+  source of truth any future appender must follow.
 
 ## Two-tier viewpoints (テスト観点)
 
