@@ -9,7 +9,7 @@ schemas, and a project template that let a QC/tester generate test cases from sp
 definitions, run them, triage failures, and report results — following ISTQB/JSTQB vocabulary
 plus VSTeP test viewpoints (テスト観点). Most of the repo has no runtime code, no build, and no
 test framework: nearly every artifact here is a markdown prompt (`commands/*.md`,
-`skills/*/SKILL.md`) or a YAML schema/fixture that Claude reads and follows at conversation time.
+`skills/*/SKILL.md`) or a YAML schema that Claude reads and follows at conversation time.
 The one exception is `tools/export_excel.py`, a real Python script with tests under `tests/` and
 a `pyproject.toml` (uv-managed); run its tests with `uv run pytest`.
 
@@ -112,25 +112,23 @@ axis is explicitly rejected (`context/viewpoints.md` top-of-file note).
    radius), not just re-running failed cases — see `commands/retest.md`.
 5. `blocked` ≠ `fail`. High pass rate with many blocked cases is false optimism; always report both.
 
-## Working in this repo (no build/lint/test — verify by fixture)
+## Working in this repo (no build/lint/test — verify against a real project)
 
-There is no compiler or test runner. The verification pattern used throughout this repo's history
-(see `docs/superpowers/plans/*.md`) is:
+There is no compiler or test runner, and this repo does not keep committed fixture projects for
+self-verification. The owner verifies changes by scaffolding/using a real project with
+`/qa-kit:init` and running the edited command/skill there — not against fixture data checked into
+this repo. When editing a `SKILL.md` or `commands/*.md`:
 
-1. Write/edit a `SKILL.md` or `commands/*.md`.
-2. Re-read it fresh (as if you were a new executor with no memory of writing it) against
-   `dev-fixtures/login-project/` (a small fake project with `docs/`, `testcases/`, `work/`).
-3. Actually perform the steps by hand and write the output into
-   `dev-fixtures/login-project/reports/` or `work/`.
-4. Diff the output against the expected result spelled out in the corresponding plan doc; if it
-   doesn't match, the instructions were ambiguous — fix the `SKILL.md` wording, not the fixture,
-   and repeat until they agree.
-5. Commit skill + regenerated fixture output together.
+1. Write/edit the file.
+2. Re-read it fresh (as if you were a new executor with no memory of writing it) to catch
+   ambiguous wording before handing it off.
+3. Report what changed and why; hand off to the owner to try it against a real scaffolded project.
+   Don't invent or commit fixture data to self-verify — that's no longer this repo's convention.
 
 When adding a new skill/command, follow the same discipline: a spec doc under
 `docs/superpowers/specs/`, a task-by-task plan under `docs/superpowers/plans/` (this repo uses the
 `superpowers:writing-plans` / `superpowers:executing-plans` skills for that), then implement and
-verify against a fixture before committing.
+hand off for the owner to verify against a real project before considering it done.
 
 ## Content conventions
 
