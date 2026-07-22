@@ -71,7 +71,7 @@ Merge-without-edit rate of test cases, per module. <60% → feed more into `view
 | --------------------- | ------------------------- | --- |
 | —                     | `/qa-kit:init`                | ✅  |
 | 3-4 Analysis + Design | `/qa-kit:design`              | ✅  |
-| 5 Implementation      | `/qa-kit:ready` `/qa-kit:data`    | ⬜  |
+| 5 Implementation      | `/qa-kit:ready`                | ✅  |
 | 6 Execution           | `/qa-kit:run` `/qa-kit:eval`      | ✅  |
 | 2 Monitoring          | `/qa-kit:report` `/qa-kit:retest` | ✅  |
 | 7 Completion          | `/qa-kit:complete`            | ⬜  |

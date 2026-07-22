@@ -41,8 +41,10 @@ into a real project.
 
 ## The pipeline
 
-Five top-level commands map to ISTQB test-process phases (`context/standards-mapping.md` has the
-full mapping table):
+Top-level commands map to ISTQB test-process phases (`context/standards-mapping.md` has the
+full mapping table). The six below form the core loop; `/qa-kit:ready` is a supplementary,
+optional readiness check (phase 5, test implementation) meant to run between `design` and
+`run` — it is not a mandatory pipeline stage, so it's listed separately:
 
 ```
 /qa-kit:init <project>              scaffold a new QC project (run once)
@@ -51,6 +53,8 @@ full mapping table):
 /qa-kit:eval <module>               triage fail → routing (A_bug..E_spec), edits nothing else
 /qa-kit:report <module>             read-only summary, regression-first
 /qa-kit:retest <module> <build>     computes next round's scope, doesn't run anything
+
+/qa-kit:ready <module>              optional pre-run check: env/test data ready? → reports/<m>-ready.md
 ```
 
 `/qa-kit:design` itself is a 6-step chain (see `commands/design.md`); each step writes an
