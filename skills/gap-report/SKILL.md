@@ -19,11 +19,11 @@ test basis, không phải "AI tự tìm ra thiếu sót". Khi nói với khách,
 ## Ranh giới
 
 - **Không tự phát hiện gap.** Việc phát hiện (thiếu evidence, thiếu operator,
-  mâu thuẫn DDL vs văn xuôi...) xảy ra ở các skill khác dọc pipeline
-  (`scenario-map`, `viewpoint-apply`, `detail-fill`) — các skill đó tự append
-  entry vào `work/$1/gaps.yaml`. `testcase-generate` không còn append gap nữa
-  kể từ khi rewire trỏ thẳng vào `details.yaml` (không tự dò evidence trong
-  `docs/`). `gap-report` chỉ đọc, group, render.
+  mâu thuẫn DDL vs văn xuôi...) xảy ra ở skill khác dọc pipeline — hiện tại
+  chỉ `detail-fill` tự append entry vào `work/$1/gaps.yaml`. `scenario-map` và
+  `viewpoint-apply` không append gap. `testcase-generate` cũng không còn
+  append gap nữa kể từ khi rewire trỏ thẳng vào `details.yaml` (không tự dò
+  evidence trong `docs/`). `gap-report` chỉ đọc, group, render.
 - **Không tự tính lại `severity`.** Entry trong `gaps.yaml` đã có `severity`
   sẵn (do skill append tính theo bảng floor dưới đây tại thời điểm ghi).
   `gap-report` group theo giá trị đó, không đối chiếu lại.
@@ -34,9 +34,10 @@ test basis, không phải "AI tự tìm ra thiếu sót". Khi nói với khách,
 ## Bảng floor severity (tham chiếu cho các skill khác dùng khi APPEND entry)
 
 `gap-report` không tự áp bảng này (đã nói ở trên — severity được tính sẵn khi
-ghi entry). Bảng này là **nguồn tham chiếu duy nhất** để các skill khác (hiện
-tại: `scenario-map`/`viewpoint-apply`/`detail-fill`; `testcase-generate` không
-còn append gap nữa) tính `severity` nhất quán trước khi append vào `gaps.yaml`:
+ghi entry). Bảng này là **nguồn tham chiếu duy nhất** để skill khác (hiện tại
+chỉ `detail-fill`; `scenario-map`, `viewpoint-apply`, `testcase-generate`
+không append gap nên không cần dùng bảng này) tính `severity` nhất quán trước
+khi append vào `gaps.yaml`:
 
 ```
 severity = max(priority của case/condition bị chặn, floor theo gap_type)
@@ -56,8 +57,8 @@ P1 > P2 > P3 khi lấy max.
 ## Cách gán `id` khi APPEND entry mới (tham chiếu cho các skill khác)
 
 Cùng vai trò với bảng floor ở trên — quy tắc chung cho MỌI skill append vào
-`gaps.yaml` (không riêng `gap-report`), để tránh trùng ID khi nhiều skill khác
-nhau (`scenario-map`, `viewpoint-apply`, `detail-fill`) cùng ghi vào 1 file qua
+`gaps.yaml` (không riêng `gap-report`), để tránh trùng ID nếu sau này có nhiều
+skill khác nhau (hiện tại chỉ `detail-fill` append) cùng ghi vào 1 file qua
 các bước của cùng 1 lần chạy `/qa-kit:design`:
 
 1. Đọc toàn bộ `work/$1/gaps.yaml` hiện có (kể cả entry `status: answered`).
@@ -77,8 +78,8 @@ các bước của cùng 1 lần chạy `/qa-kit:design`:
 ```yaml
 - id: GAP-001
   raised_at: "2026-07-17T09:00:00+07:00"   # ISO 8601, giờ VN
-  raised_by: testcase-generate              # skill nào phát hiện
-  step: 4                                   # bước nào trong chain (1-6)
+  raised_by: detail-fill                    # skill nào phát hiện
+  step: 3                                   # bước nào trong chain (1-6)
   trace: [DD-3.2.1]
   condition_ref: "Password đúng biên dưới"
   gap_type: missing_evidence | contradiction | missing_operator | missing_message_list | missing_screen_item | ambiguous
