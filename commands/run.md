@@ -27,6 +27,13 @@ Không có scope -> DỪNG. Cấm tự quyết định round 2 chạy gì.
   — hệ CLI/daemon dùng field khác như `ssh_host`/`spool_root`/`external_mock_url`, xem
   mục System Profile trong `CLAUDE.md` để biết field nào dự án này dùng) đối chiếu
   `forbidden_patterns`. Khớp bất kỳ pattern nào -> **DỪNG NGAY**, không hỏi lại.
+- `environments.<target>` không có giá trị chuỗi nào để quét (block rỗng hoặc chỉ còn
+  comment mẫu — như biến thể mobile app/`khác` do `/qa-kit:init` sinh ra) -> KHÔNG được
+  coi là an toàn. Guard không có gì để quét nghĩa là chưa ai xác nhận đây không phải
+  prod, chứ không phải đã xác nhận là test -> **DỪNG NGAY**, không hỏi lại. Lý do khác
+  với case khớp forbidden pattern: đây không phải lỗi chính tả cần sửa pattern, mà là
+  `config/env.yaml` chưa được điền field thật — báo tester điền field host/url thật của
+  test env vào `environments.<target>` trong `config/env.yaml` rồi chạy lại.
 
 ## Nhánh AUTO (`automatable: true`)
 
@@ -35,7 +42,7 @@ Xem `verify[]` của case dùng họ `method` nào:
 - **Toàn bộ `ui_*`/`http_*`/`db_query`** (web/API):
   1. Sinh script từ `steps[]` + `verify[]` -> `e2e/$1.spec.ts`
   2. Chạy: `npx playwright test e2e/$1.spec.ts`
-  3. Ghi kết quả -> `results/$1-<run_id>.yaml`
+  3. Ghi kết quả -> `results/$1-r<N>.yaml`
 
 - **Toàn bộ `cli_exit_code`/`cli_output`/`file_exists`/`file_content`/`log_grep`**
   (CLI-daemon):
@@ -45,7 +52,7 @@ Xem `verify[]` của case dùng họ `method` nào:
      code/file/log đúng theo từng `verify[]` entry
   3. Script tự `exit 0` (pass toàn bộ) / `exit 1` (có ít nhất 1 verify fail)
   4. Chạy: `bash e2e/$1.sh`
-  5. Ghi kết quả -> `results/$1-<run_id>.yaml`
+  5. Ghi kết quả -> `results/$1-r<N>.yaml`
 
 - **Case trộn cả 2 họ trong cùng 1 `verify[]`** (vd 1 entry `ui_visible` + 1 entry
   `cli_exit_code` trong cùng 1 case): KHÔNG tự động hoá — chuyển nhánh MANUAL, ghi lý do
@@ -55,7 +62,7 @@ Case thiếu `verify[]` -> KHÔNG tự chế cách verify. Chuyển sang nhánh 
 
 ## Nhánh MANUAL
 
-Sinh `results/$1-<run_id>-checklist.md`: mỗi case 1 dòng, có precondition, steps,
+Sinh `results/$1-r<N>-checklist.md`: mỗi case 1 dòng, có precondition, steps,
 expected, ô trống cho actual + pass/fail + note.
 Tester tick tay, commit lại.
 
